@@ -19,9 +19,11 @@ const StyledHeader = styled.header`
   height: 50px;
   justify-content: center;
   align-items: center;
+  margin: 5px;
+  padding: 5px;
 `;
 
 const Title = styled.h1`
   margin: 0px;
-  font-family: cursive;
+  font-family: 'Rock Salt', cursive;
 `;
