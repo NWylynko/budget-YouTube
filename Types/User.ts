@@ -4,4 +4,5 @@ export interface User {
     last: string;
   };
   profilePicUrl: string;
+  subscribers: number;
 }
