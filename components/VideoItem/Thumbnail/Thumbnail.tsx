@@ -1,18 +1,11 @@
 import styled from "styled-components";
-import Image from "next/image";
-
-const myLoader = ({ src, width, quality }) => {
-  return `https://via.placeholder.com/320x180`;
-};
+// import Image from "next/image";
 
 export const Thumbnail = () => {
   return (
     <Container>
-      <Image
-        loader={myLoader}
+      <StyledProfilePic
         src="https://via.placeholder.com/320x180"
-        width={320}
-        height={180}
       />
       <TimeStampContainer>
         <TimeStamp>

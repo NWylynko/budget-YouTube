@@ -1,22 +1,25 @@
 import styled from "styled-components";
-import useRouter from "next/router"
+import Link from "next/link";
 
-import { Thumbnail } from "./Thumbnail"
-import { Details } from "./Details"
+import { Thumbnail } from "./Thumbnail";
+import { Details } from "./Details";
 
 export const VideoItem = () => {
 
-  const router = useRouter();
-
   return (
-    <Container>
-      <Thumbnail />
-      <Details />
-    </Container>
+    <Link href={`/video/${1}`}>
+      <Container>
+        <Thumbnail />
+        <Details />
+      </Container>
+    </Link>
   );
 };
 
 const Container = styled.div`
   max-width: 320px;
-`;
 
+  &:hover {
+    cursor: pointer;
+  }
+`;

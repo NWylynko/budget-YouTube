@@ -1,14 +1,19 @@
 import styled from "styled-components"
 import Image from 'next/image'
+import Link from "next/link"
 
 export interface HeaderProps {
 }
 
-export const Header = ({ children }) => {
+export const Header = () => {
   return (
     <StyledHeader>
-      <Image src="/logo.png" height={50} width={70} />
-      <Title>Budget YouTube</Title>
+      <Link href="/">
+        <>
+          <Image src="/logo.png" height={50} width={70} />
+          <Title>Budget YouTube</Title>
+        </>
+      </Link>
     </StyledHeader>
   )
 }

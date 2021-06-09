@@ -2226,6 +2226,7 @@ __metadata:
     react-dom: ^17.0.2
     react-icons: ^4.2.0
     react-is: ^17.0.2
+    react-player: ^2.9.0
     styled-components: ^5.3.0
     typescript: ^4.3.2
     uuid: ^8.3.2
@@ -2753,7 +2754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2":
+"deepmerge@npm:^4.0.0, deepmerge@npm:^4.2.2":
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
   checksum: 85abf8e0045ee280996e7d2396979c877ef0741e413b716e42441110e0a83ac08098b2a49cea035510060bf667c0eae3189b2a52349f5fa4b000c211041637b1
@@ -3959,6 +3960,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"load-script@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "load-script@npm:1.0.0"
+  checksum: 9f907ee20dfe8068af210be73a072dd61a287566a23b5666b9c6b9957e66eb33cc7c6a790308cf307c373d7ff75265ab1dde779c3fff90d65535fb3a1c0a167a
+  languageName: node
+  linkType: hard
+
 "loader-utils@npm:1.2.3":
   version: 1.2.3
   resolution: "loader-utils@npm:1.2.3"
@@ -4129,6 +4137,13 @@ fsevents@~2.3.1:
     inherits: ^2.0.1
     safe-buffer: ^5.1.2
   checksum: ca0b260ea29746f1017ad16bc0e164299ae453d2d6a24d635cc6ec03e280f350b09faa4899bfed9387c81457ca55981e9a684336d89faa94b1d2a01903fae2ec
+  languageName: node
+  linkType: hard
+
+"memoize-one@npm:^5.1.1":
+  version: 5.2.1
+  resolution: "memoize-one@npm:5.2.1"
+  checksum: 6b7dab7d8d9dca696d500dbc7f6b1445cbc4168d8208ee2746dd1a7f75378445d9bc6a2def7868afee81c87e630294456310f33f3f1eb738f69d748c797d87d5
   languageName: node
   linkType: hard
 
@@ -4935,7 +4950,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"prop-types@npm:15.7.2":
+"prop-types@npm:15.7.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -5053,6 +5068,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:^3.0.1":
+  version: 3.2.0
+  resolution: "react-fast-compare@npm:3.2.0"
+  checksum: 6fe65c889eb4f326e97769135f97b3d63ac68737866f9c37f9625c9de4f5eaa9abed6f748eb3fd6a66808392118842916309cab7cfa99c67991f0c837433d6d2
+  languageName: node
+  linkType: hard
+
 "react-icons@npm:^4.2.0":
   version: 4.2.0
   resolution: "react-icons@npm:4.2.0"
@@ -5073,6 +5095,21 @@ fsevents@~2.3.1:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 3eff23f410d40ab9bc5177f147a92c7f42c356a21ecea340e0554566956d67e5e1ba56f26cc7fa22339ac3c7151744177bd6305eaa26d3cbf15f354358c9d9b6
+  languageName: node
+  linkType: hard
+
+"react-player@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "react-player@npm:2.9.0"
+  dependencies:
+    deepmerge: ^4.0.0
+    load-script: ^1.0.0
+    memoize-one: ^5.1.1
+    prop-types: ^15.7.2
+    react-fast-compare: ^3.0.1
+  peerDependencies:
+    react: ">=16.6.0"
+  checksum: 32016230af242c472c266aea491621b8cb319239880e21b5d4dff95815d4dbc517bb47f0ca3a57ef9b4dd3e22087c17cd66e23072768584902069d16b5d70b63
   languageName: node
   linkType: hard
 

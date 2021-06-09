@@ -1,19 +1,12 @@
 import styled from "styled-components";
-import Image from "next/image";
-
-const myLoader2 = ({ src, width, quality }) => {
-  return `https://via.placeholder.com/36x36`;
-};
+// import Image from "next/image";
 
 export const Details = () => {
   return (
     <Container>
       <ImageContainer>
         <StyledImage
-          loader={myLoader2}
           src="https://via.placeholder.com/36x36"
-          width={36}
-          height={36}
         />
       </ImageContainer>
       <TextContainer>
@@ -37,7 +30,7 @@ const ImageContainer = styled.div`
   min-width: 36px;
 `;
 
-const StyledImage = styled(Image)`
+const StyledImage = styled.StyledProfilePic`
   border-radius: 50%;
 `;
 

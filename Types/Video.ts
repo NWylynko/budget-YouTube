@@ -1,4 +1,4 @@
-import type { User } from "."
+import type { User, Comment } from "."
 
 export interface Video {
   id: string;
@@ -9,4 +9,7 @@ export interface Video {
   timestamp: Date;
   views: number;
   length: number;
+  likes: number;
+  dislikes: number;
+  comments: Comment[];
 }
