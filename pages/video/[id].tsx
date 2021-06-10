@@ -1,10 +1,11 @@
 import ReactPlayer from 'react-player'
 import styled from "styled-components"
+import Link from "next/link"
 
 import { AiOutlineLike, AiOutlineDislike, AiFillLike, AiFillDislike } from "react-icons/ai"
 
 import { Comments } from "../../components/Comments"
-import { Button } from "../../components/Styles/Button"
+import { SubscribeButton } from "../../components/Styles/SubscribeButton"
 
 export default function VideoPage() {
   return (
@@ -29,7 +30,7 @@ export default function VideoPage() {
           <StyledProfilePic src="https://via.placeholder.com/48" />
         </ProfilePicContainer>
         <CreatorSubInfo>
-          <UserNameTitle>User Name</UserNameTitle>
+          <Link href={`/user/1`}><UserNameTitle>User Name</UserNameTitle></Link>
           <SubscriberCount>2.19M subscribers</SubscriberCount>
           <VideoDescription>the description of the video</VideoDescription>
         </CreatorSubInfo>
@@ -90,7 +91,7 @@ const StyledProfilePic = styled.img`
 
 const CreatorSubInfo = styled.div``;
 
-const UserNameTitle = styled.h2`
+const UserNameTitle = styled.h3`
   margin: 3px;
   color: ${props => props.theme.colors.darkText};
 `;
@@ -104,7 +105,3 @@ const VideoDescription = styled.p`
   margin: 3px;
 `;
 
-const SubscribeButton = styled(Button)`
-  background-color: ${props => props.theme.colors.darkBrand};
-  color: white;
-`;
