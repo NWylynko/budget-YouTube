@@ -1,21 +1,24 @@
-import { useState } from "react"
-import styled from "styled-components"
-import { Button } from "../../Styles/Button"
+import { useState } from "react";
+import styled from "styled-components";
+import { Button } from "../../Styles/Button";
 
 export const AddComment = () => {
-
-  const [comment, setComment] = useState("")
+  const [comment, setComment] = useState("");
 
   return (
     <Container>
       <ImageContainer>
         <StyledImage src="https://via.placeholder.com/40" />
       </ImageContainer>
-      <StyledInput value={comment}  />
-      <CommentButton>Comment</CommentButton>
+      <StyledInput
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Add a comment..."
+      />
+      <CommentButton disabled={comment.length === 0}>Comment</CommentButton>
     </Container>
-  )
-}
+  );
+};
 
 const Container = styled.div`
   display: flex;
@@ -38,10 +41,15 @@ const StyledInput = styled.input`
   border: none;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-bottom-color: ${props => props.theme.colors.lightGrey};
+  border-bottom-color: ${(props) => props.theme.colors.lightText};
 `;
 
 const CommentButton = styled(Button)`
-  background-color: ${props => props.theme.colors.lightGrey};
-  color:  ${props => props.theme.colors.greyButtons};
+  background-color: ${(props) => props.theme.colors.secondary};
+  color: white;
+
+  &:disabled {
+    background-color: #e7e7e7;
+    color: ${(props) => props.theme.colors.greyButtons};
+  }
 `;
