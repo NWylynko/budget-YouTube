@@ -6,6 +6,10 @@ const GlobalStyle = createGlobalStyle`
   body{
     font-family: 'Noto Sans KR', sans-serif;
   }
+
+  * {
+    transition: all 125ms ease-in-out;
+  }
 `;
  
 const theme = {
