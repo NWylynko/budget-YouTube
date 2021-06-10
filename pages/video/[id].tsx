@@ -3,6 +3,9 @@ import styled from "styled-components"
 
 import { AiOutlineLike, AiOutlineDislike, AiFillLike, AiFillDislike } from "react-icons/ai"
 
+import { Comments } from "../../components/Comments"
+import { Button } from "../../components/Styles/Button"
+
 export default function VideoPage() {
   return (
     <Container>
@@ -32,6 +35,7 @@ export default function VideoPage() {
         </CreatorSubInfo>
         <SubscribeButton>Subscribe</SubscribeButton>
       </CreatorInfo>
+      <Comments />
     </Container>
   )
 }
@@ -100,14 +104,7 @@ const VideoDescription = styled.p`
   margin: 3px;
 `;
 
-const SubscribeButton = styled.button`
-  height: 36px;
-  text-transform: uppercase;
-  padding: 10px;
-  border: none;
+const SubscribeButton = styled(Button)`
   background-color: ${props => props.theme.colors.darkBrand};
   color: white;
-  border-radius: 4px;
-  font-weight: 700;
-  margin: 15px;
 `;

@@ -30,7 +30,7 @@ const ImageContainer = styled.div`
   min-width: 36px;
 `;
 
-const StyledImage = styled.StyledProfilePic`
+const StyledImage = styled.img`
   border-radius: 50%;
 `;
 

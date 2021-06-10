@@ -4,7 +4,7 @@ import styled from "styled-components";
 export const Thumbnail = () => {
   return (
     <Container>
-      <StyledProfilePic
+      <img
         src="https://via.placeholder.com/320x180"
       />
       <TimeStampContainer>

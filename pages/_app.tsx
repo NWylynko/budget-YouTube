@@ -12,6 +12,7 @@ const theme = {
   colors: {
     brand: "#f00",
     darkBrand: "#cc0000",
+    secondary: "#065fd4",
     greyButtons: "#606060",
     background: "#ffffff",
     foreground: "#f9f9f9",
