@@ -21,6 +21,6 @@ export const addSubscriber = async ({ subscribee, subscriber }: newSubscriber) =
 
   `);
 
-  return { subscribee, subscriber }
+  return { subscribed: true }
 
 }
