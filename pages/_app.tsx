@@ -3,12 +3,9 @@ import { Layout } from "../components/layout"
 import Head from "next/head"
 
 const GlobalStyle = createGlobalStyle`
-  body{
-    font-family: 'Noto Sans KR', sans-serif;
-  }
-
   * {
     transition: all 125ms ease-in-out;
+    font-family: 'Noto Sans KR', sans-serif;
   }
 `;
  
