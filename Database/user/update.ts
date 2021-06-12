@@ -5,7 +5,7 @@ import type { User } from "./get"
 import { getUser } from "./get"
 
 // updates one or more of the information about a user
-export const removeUser = async ({ userId, userName, email, ProfilePicUrl }: User) => {
+export const removeUser = async ({ userId, userName, email, ProfilePicUrl }: Partial<User>) => {
 
   const numOfItemsToUpdate = [userName, email, ProfilePicUrl].filter(value => value !== undefined).length
 

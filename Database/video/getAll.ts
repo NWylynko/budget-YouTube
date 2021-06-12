@@ -1,5 +1,14 @@
 import db from "../db";
 import SQL from 'sql-template-strings';
 
-// gets a list of videos that are within the parameters the user requests
-export const getAllVideo = async () => {}
+import type { Video } from "./get"
+
+// gets a list of videos that are public 
+export const getAllVideo = async (): Promise<Video> => db.get(SQL`
+
+  SELECT *
+  FROM videos
+  WHERE access = "public"
+  ORDER BY timestamp ASC
+
+`);
