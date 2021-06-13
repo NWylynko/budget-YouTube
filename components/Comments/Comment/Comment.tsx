@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Link from "next/link"
 
 export const Comment = () => {
   return (
@@ -8,7 +9,9 @@ export const Comment = () => {
       </ProfilePicContainer>
       <SubContainer>
         <Horizontal>
-          <UserName>User Name</UserName>
+          <Link href={`/user/${1}`}>
+            <UserName>User Name</UserName>
+          </Link>
           <TimeStamp>2 years ago</TimeStamp>
         </Horizontal>
         <UserMessage>The users comment</UserMessage>
