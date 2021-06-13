@@ -2384,6 +2384,7 @@ __metadata:
     react-icons: ^4.2.0
     react-is: ^17.0.2
     react-player: ^2.9.0
+    sql-template-strings: ^2.2.2
     sqlite: ^4.0.23
     sqlite3: ^5.0.2
     styled-components: ^5.3.0
@@ -6427,6 +6428,13 @@ fsevents@~2.3.1:
   version: 1.4.8
   resolution: "sourcemap-codec@npm:1.4.8"
   checksum: 4d56d1232a45af813606d1755f11e7ae6b3542c615a7e3f904382f0134a9412ba8d090e83749254d78449eafdfcc62d5158b8f35e6241480b51b74b5c46b99f9
+  languageName: node
+  linkType: hard
+
+"sql-template-strings@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "sql-template-strings@npm:2.2.2"
+  checksum: 9a0ddb24d2549aeb3a966c6eb491a70495db08d80dd59e7d12b3282d2db0edfa38454348f0d9d82d6aafed37959948d0ee16ece38a9da3bd8ea8b34682103cf6
   languageName: node
   linkType: hard
 
