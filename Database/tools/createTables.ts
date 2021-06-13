@@ -1,7 +1,7 @@
 import db from "../db";
 import SQL from 'sql-template-strings';
 
-export const createTables = async () => db.run(SQL`
+export const createTables = async () => db.exec(SQL`
 
   CREATE TABLE "users" (
     "userId"	TEXT NOT NULL UNIQUE,
