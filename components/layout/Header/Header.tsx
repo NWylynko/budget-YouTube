@@ -18,7 +18,7 @@ export const Header = () => {
         </LogoWithTextContainer>
       </Link>
       <Link href="/newVideo">
-        <BiVideoPlus size={36} color="#606060" />
+        <div><BiVideoPlus size={36} color="#606060" /></div>
       </Link>
       <Link href={`/user/1`}>
         <StyledProfilePic src="https://via.placeholder.com/48" />
