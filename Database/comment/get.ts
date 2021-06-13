@@ -10,6 +10,7 @@ interface Comment {
   profilePicUrl: string;
 }
 
+// get all the comments for a single video
 export const getComment = async ({ videoId }: { videoId: string }): Promise<Comment[]> => db.get(SQL`
 
   SELECT 

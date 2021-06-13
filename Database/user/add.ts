@@ -8,6 +8,7 @@ interface newUser {
   profilePicUrl?: string;
 }
 
+// creates a new user
 export const addUser = async ({
   userName,
   email,

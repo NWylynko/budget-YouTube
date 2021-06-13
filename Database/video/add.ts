@@ -8,6 +8,8 @@ interface newVideo {
   access: string;
 }
 
+// creates a new user, not all the information is required up front. 
+// update the row later as more information is collected
 export const addVideo = async ({ userId, videoName, access }: newVideo) => {
 
   const newId = uuid();

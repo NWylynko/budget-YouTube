@@ -7,6 +7,9 @@ interface newVote {
   type: "like" | "dislike";
 }
 
+// adds a new vote be a user to a video, if the 
+// user changes there mind to the opposite type
+// the client must use the update function
 export const addVote = async ({ videoId, userId, type }: newVote) => {
 
   await db.run(SQL`

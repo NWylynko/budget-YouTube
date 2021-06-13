@@ -6,6 +6,7 @@ interface newSubscriber {
   subscriber: string;
 }
 
+// subscribers a user to another user
 export const addSubscriber = async ({ subscribee, subscriber }: newSubscriber) => {
 
   await db.run(SQL`

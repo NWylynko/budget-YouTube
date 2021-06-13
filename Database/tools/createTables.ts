@@ -1,6 +1,7 @@
 import db from "../db";
 import SQL from 'sql-template-strings';
 
+// create all the tables required for the database
 export const createTables = async () => db.exec(SQL`
 
   CREATE TABLE "users" (

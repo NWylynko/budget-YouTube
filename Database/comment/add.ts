@@ -8,6 +8,7 @@ interface newComment {
   message: string;
 }
 
+// creates a new comment on a video
 export const addComment = async ({ videoId, userId, message }: newComment) => {
 
   const newId = uuid();
