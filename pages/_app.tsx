@@ -1,11 +1,16 @@
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Layout } from "../components/layout"
 import Head from "next/head"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const GlobalStyle = createGlobalStyle`
   * {
     transition: all 125ms ease-in-out;
     font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  body {
+    margin: 16px;
   }
 `;
  
