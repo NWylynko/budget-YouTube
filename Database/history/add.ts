@@ -21,6 +21,7 @@ export const addHistory = async ({ videoId, userId }: { videoId: string, userId:
     );
   `);
 
+  // don't await like this will error 95% of the time (by design) and we don't want the user to wait for it
   calculateViews({ videoId })
 
   return { videoId, userId, timestamp, watched: 0 }
