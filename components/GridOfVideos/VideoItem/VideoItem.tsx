@@ -12,15 +12,16 @@ interface VideoitemProps {
   length: number;
   thumbnailUrl: string;
   profilePicUrl: string;
+  views: number;
 }
 
-export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailUrl, profilePicUrl, userName }: VideoitemProps) => {
+export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailUrl, profilePicUrl, userName, views }: VideoitemProps) => {
 
   return (
     <Link href={`/video/${videoId}`}>
       <Container>
         <Thumbnail {...{ length, thumbnailUrl }} />
-        <Details {...{ videoName, timestamp, profilePicUrl, userName }} />
+        <Details {...{ videoName, timestamp, profilePicUrl, userName, views }} />
       </Container>
     </Link>
   );

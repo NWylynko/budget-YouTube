@@ -10,9 +10,10 @@ interface DetailsProps {
   userName: string;
   timestamp: number;
   profilePicUrl: string;
+  views: number;
 }
 
-export const Details = ({profilePicUrl, videoName, userName, timestamp}: DetailsProps) => {
+export const Details = ({profilePicUrl, videoName, userName, timestamp, views}: DetailsProps) => {
   return (
     <Container>
       <ImageContainer>
@@ -25,7 +26,7 @@ export const Details = ({profilePicUrl, videoName, userName, timestamp}: Details
       <TextContainer>
         <span>{videoName}</span>
         <SubText>{userName}</SubText>
-        <SubText>666K views • {timeAgo.format(timestamp)}</SubText>
+        <SubText>{views} views • {timeAgo.format(timestamp)}</SubText>
       </TextContainer>
     </Container>
   );

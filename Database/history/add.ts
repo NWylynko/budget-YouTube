@@ -1,5 +1,6 @@
 import db from "../db";
 import SQL from 'sql-template-strings';
+import { calculateViews } from "../views/calculateViews";
 
 // adds a video to a users history
 export const addHistory = async ({ videoId, userId }: { videoId: string, userId: string }) => {
@@ -19,6 +20,8 @@ export const addHistory = async ({ videoId, userId }: { videoId: string, userId:
       "0"
     );
   `);
+
+  calculateViews({ videoId })
 
   return { videoId, userId, timestamp, watched: 0 }
 

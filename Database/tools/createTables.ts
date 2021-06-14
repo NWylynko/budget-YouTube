@@ -21,8 +21,10 @@ export const createTables = async () => db.exec(SQL`
     "timestamp"	INTEGER NOT NULL,
     "length"	INTEGER,
     "thumbnailUrl"	TEXT,
-    FOREIGN KEY("userId") REFERENCES "users"("userId"),
-    PRIMARY KEY("videoId")
+    "views"	INTEGER NOT NULL DEFAULT 0,
+    "viewsLastCalc"	INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY("videoId"),
+    FOREIGN KEY("userId") REFERENCES "users"("userId")
   );
 
   CREATE TABLE "comments" (

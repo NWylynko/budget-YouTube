@@ -9,6 +9,7 @@ interface Video {
   length: number;
   thumbnailUrl: string;
   profilePicUrl: string;
+  views: number;
 }
 
 export const GridOfVideos = ({ videos }: { videos: Video[] }) => {

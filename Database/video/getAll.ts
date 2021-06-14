@@ -12,13 +12,17 @@ interface Video {
   thumbnailUrl: string;
   profilePicUrl: string;
   userName: string;
+  views: number;
 }
 
 
 // gets a list of videos that are public 
 export const getAllVideo = async (): Promise<Video[]> => db.all(SQL`
 
-  SELECT videos.*, users.userName, users.profilePicUrl
+  SELECT 
+    videos.*, 
+    users.userName, 
+    users.profilePicUrl
   FROM videos, users
   WHERE access = "public"
   AND videos.userId = users.userId
