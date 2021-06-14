@@ -12,24 +12,21 @@ export const updateVideo = async ({videoId, newVideo}: {videoId: string, newVide
 
   const updatedVideo = { ...video, ...newVideo }
 
+  const { videoName, description, access, thumbnailUrl, length } = updatedVideo
+
   await db.run(SQL`
 
-  INSERT INTO "videos" (
-    "videoId",
-    "userId",
-    "videoName",
-    "access",
-    "timestamp"
-  ) VALUES (
-    ${newId},
-    ${userId},
-    ${videoName},
-    ${access},
-    ${timestamp}
-  );
+  UPDATE "videos"
+  SET
+    "videoName" = ${videoName},
+    "description" = ${description},
+    "access" = ${access},
+    "thumbnailUrl" = ${thumbnailUrl},
+    "length" = ${length}
+  WHERE "videoId" = ${videoId}
 
-`);
+  `);
 
-return { videoId: newId, userId, videoName, access, timestamp }
+  return updatedVideo
 
 }
