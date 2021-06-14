@@ -1,9 +1,6 @@
 import styled from "styled-components";
 // import Image from "next/image";
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en'
-TimeAgo.addDefaultLocale(en)
-const timeAgo = new TimeAgo('en-US')
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 interface DetailsProps {
   videoName: string;
@@ -26,7 +23,7 @@ export const Details = ({profilePicUrl, videoName, userName, timestamp, views}: 
       <TextContainer>
         <span>{videoName}</span>
         <SubText>{userName}</SubText>
-        <SubText>{views} views • {timeAgo.format(timestamp)}</SubText>
+        <SubText>{views} views • {formatDistanceToNow(timestamp)}</SubText>
       </TextContainer>
     </Container>
   );

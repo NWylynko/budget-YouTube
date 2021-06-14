@@ -61,6 +61,7 @@ export const createTables = async () => db.exec(SQL`
     "watched"	INTEGER NOT NULL,
     FOREIGN KEY("userId") REFERENCES "users"("userId"),
     FOREIGN KEY("videoId") REFERENCES "videos"("videoId")
+    PRIMARY KEY("videoId","userId")
   );
 
 `);

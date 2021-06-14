@@ -1,42 +1,79 @@
 import ReactPlayer from 'react-player'
 import styled from "styled-components"
 import Link from "next/link"
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import format from 'date-fns/format'
 
 import { AiOutlineLike, AiOutlineDislike, AiFillLike, AiFillDislike } from "react-icons/ai"
 
 import { Comments } from "../../components/Comments"
 import { SubscribeButton } from "../../components/Styles/SubscribeButton"
 
-export default function VideoPage() {
+import { getVideo } from '../../Database/video/get'
+import { getComment } from '../../Database/comment/get';
+import { getVote } from '../../Database/vote/get';
+import { getUser } from '../../Database/user/get'
+import { getSubscriberCount } from '../../Database/subscriber/getCount'
+import { getSubscriber } from '../../Database/subscriber/get'
+import { getWatched } from '../../Database/history/get';
+import { addHistory } from '../../Database/history/add';
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  console.time()
+
+  const videoId = context.params.id as string
+  const userId = "2"
+
+  const video = await getVideo({ videoId })
+  const comments = await getComment({ videoId }) || []
+  const vote = await getVote({ videoId })
+  const videoUser = await getUser({ userId: video.userId })
+  const subCount = await getSubscriberCount({ userId: video.userId })
+  const { subscribed } = await getSubscriber({ subscriber: userId, subscribee: video.userId })
+  const { watched } = await getWatched({ userId, videoId }) || { watched: 0 }
+  await addHistory({ videoId, userId });
+
+  console.timeEnd()
+
+  return {
+    props: { video, comments, vote, videoUser, subCount, subscribed, watched },
+  }
+}
+
+export default function VideoPage({ video, comments, vote, videoUser, subCount, subscribed, watched }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+  console.log({video, comments, vote, videoUser, subCount, subscribed, watched})
+
   return (
     <Container>
       <ReactPlayer url='https://www.youtube.com/watch?v=dQw4w9WgXcQ' width="100%" />
-      <Title>Video Title</Title>
+      <Title>{video.videoName}</Title>
       <StatsBar>
-        <StatsInfo>666,546 views • Oct 25, 2009</StatsInfo>
+        <StatsInfo>{video.views} views • {format(video.timestamp, "PPP")}</StatsInfo>
         <LikeContainer>
           <LikeSubContainer>
             <AiOutlineLike size={28} />
-            <span>9.9M</span>
+            <span>{vote.likes}</span>
           </LikeSubContainer>
           <LikeSubContainer>
             <AiOutlineDislike size={28} />
-            <span>287K</span>
+            <span>{vote.dislikes}</span>
           </LikeSubContainer>
         </LikeContainer>
       </StatsBar>
       <CreatorInfo>
         <ProfilePicContainer>
-          <StyledProfilePic src="https://via.placeholder.com/48" />
+          <StyledProfilePic src={videoUser.profilePicUrl} width={48} height={48} />
         </ProfilePicContainer>
         <CreatorSubInfo>
-          <Link href={`/user/1`}><UserNameTitle>User Name</UserNameTitle></Link>
-          <SubscriberCount>2.19M subscribers</SubscriberCount>
-          <VideoDescription>the description of the video</VideoDescription>
+          <Link href={`/user/${videoUser.userId}`}><UserNameTitle>{videoUser.userName}</UserNameTitle></Link>
+          <SubscriberCount>{subCount.subscibers} subscribers</SubscriberCount>
+          <VideoDescription>{video.description}</VideoDescription>
         </CreatorSubInfo>
         <SubscribeButton>Subscribe</SubscribeButton>
       </CreatorInfo>
-      <Comments />
+      <Comments comments={comments} />
     </Container>
   )
 }

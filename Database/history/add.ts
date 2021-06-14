@@ -7,22 +7,34 @@ export const addHistory = async ({ videoId, userId }: { videoId: string, userId:
 
   const timestamp = Date.now();
 
-  await db.run(SQL`
-    INSERT INTO "history" (
-      "videoId",
-      "userId",
-      "timestamp",
-      "watched"
-    ) VALUES (
-      ${videoId},
-      ${userId},
-      ${timestamp},
-      "0"
-    );
+  const results = await db.get(SQL`
+  
+    SELECT *
+    FROM history
+    WHERE videoId = ${videoId}
+    AND userId = ${userId}
+
   `);
 
-  // don't await like this will error 95% of the time (by design) and we don't want the user to wait for it
-  calculateViews({ videoId })
+  if (results === undefined) {
+
+    await db.run(SQL`
+      INSERT INTO "history" (
+        "videoId",
+        "userId",
+        "timestamp",
+        "watched"
+      ) VALUES (
+        ${videoId},
+        ${userId},
+        ${timestamp},
+        "0"
+      );
+    `);
+
+    console.log(await calculateViews({ videoId }))
+
+  }
 
   return { videoId, userId, timestamp, watched: 0 }
 

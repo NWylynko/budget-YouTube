@@ -11,7 +11,7 @@ interface Comment {
 }
 
 // get all the comments for a single video
-export const getComment = async ({ videoId }: { videoId: string }): Promise<Comment[]> => db.get(SQL`
+export const getComment = async ({ videoId }: { videoId: string }): Promise<Comment[]> => db.all(SQL`
 
   SELECT 
     "comments"."commentId", 

@@ -1,16 +1,23 @@
 import { AddComment } from "./AddComment"
 import { Comment } from "./Comment"
 
-export const Comments = () => {
+interface Comment {
+  commentId: string;
+  message: string;
+  profilePicUrl: string;
+  timestamp: number;
+  userId: string;
+  userName: string;
+}
+
+export const Comments = ({ comments }: { comments: Comment[] }) => {
   return (
     <>
       <h2>Comments</h2>
       <AddComment />
-      <Comment />
-      <Comment />
-      <Comment />
-      <Comment />
-      <Comment />
+      {comments.map((comment) => (
+        <Comment key={comment.commentId} {...comment} />
+      ))}
     </>
   )
 }

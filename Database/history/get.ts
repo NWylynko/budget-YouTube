@@ -1,23 +1,11 @@
 import db from "../db";
 import SQL from 'sql-template-strings';
 
-// gets a users history
-export const getHistory = async ({userId}: { userId: string }) => db.all(SQL`
-
+// gets the amount of a video a user has watched (if any)
+export const getWatched = async ({videoId, userId}: { videoId: string, userId: string }): Promise<{watched: number} | undefined> => db.get(SQL`
   SELECT 
-    videos.videoId, 
-    users.userId, 
-    users.userName,
-    users.profilePicUrl,
-    history.timestamp,
-    history.watched,
-    videos.description,
-    videos.length,
-    videos.thumbnailUrl,
-    videos.videoName
-  FROM history, videos, users
+    watched
+  FROM history
   WHERE history.userId = ${userId}
-  AND videos.userId = history.userId
-  AND users.userId = history.userId
-
+  AND history.videoId = ${videoId}
 `);

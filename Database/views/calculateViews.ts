@@ -16,7 +16,7 @@ export const calculateViews = async ({ videoId }: { videoId: string }) => {
     WHERE videoId = ${videoId}
   `);
 
-  if (Date.now() - fiveMinutes > viewsLastCalc) {
+  if (Date.now() - fiveMinutes < viewsLastCalc) {
     return { error: "try again in five minutes" };
   }
 
@@ -26,10 +26,13 @@ export const calculateViews = async ({ videoId }: { videoId: string }) => {
     WHERE videoId = ${videoId}
   `);
 
+  const timestamp = Date.now();
+
   await db.run(SQL`
     UPDATE "videos"
     SET
-      "views" = ${views}
+      "views" = ${views},
+      "viewsLastCalc" = ${timestamp}
     WHERE "videoId" = ${videoId}
   `);
 

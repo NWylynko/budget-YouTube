@@ -1,20 +1,30 @@
 import styled from "styled-components";
 import Link from "next/link"
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
-export const Comment = () => {
+interface Comment {
+  commentId: string;
+  message: string;
+  profilePicUrl: string;
+  timestamp: number;
+  userId: string;
+  userName: string;
+}
+
+export const Comment = ({ message, profilePicUrl, timestamp, userId, userName }: Comment) => {
   return (
     <Container>
       <ProfilePicContainer>
-        <StyledImg src="https://via.placeholder.com/40" />
+        <StyledImg src={profilePicUrl} height={40} width={40} />
       </ProfilePicContainer>
       <SubContainer>
         <Horizontal>
-          <Link href={`/user/${1}`}>
-            <UserName>User Name</UserName>
+          <Link href={`/user/${userId}`}>
+            <UserName>{userName}</UserName>
           </Link>
-          <TimeStamp>2 years ago</TimeStamp>
+          <TimeStamp>{formatDistanceToNow(timestamp)}</TimeStamp>
         </Horizontal>
-        <UserMessage>The users comment</UserMessage>
+        <UserMessage>{message}</UserMessage>
       </SubContainer>
     </Container>
   );
