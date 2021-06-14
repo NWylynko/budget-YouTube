@@ -52,4 +52,13 @@ export const createTables = async () => db.exec(SQL`
     FOREIGN KEY("userId") REFERENCES "users"("userId")
   );
 
+  CREATE TABLE "history" (
+    "videoId"	TEXT NOT NULL,
+    "userId"	TEXT NOT NULL,
+    "timestamp"	INTEGER NOT NULL,
+    "watched"	INTEGER NOT NULL,
+    FOREIGN KEY("userId") REFERENCES "users"("userId"),
+    FOREIGN KEY("videoId") REFERENCES "videos"("videoId")
+  );
+
 `);
