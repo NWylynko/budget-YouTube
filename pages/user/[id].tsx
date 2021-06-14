@@ -17,7 +17,7 @@ export default function UserPage() {
           <SubscribeButton>Subscribe</SubscribeButton>
         </div>
       </UserBar>
-      <GridOfVideos />
+      {/* <GridOfVideos /> */}
     </Container>
   );
 }

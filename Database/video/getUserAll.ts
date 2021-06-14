@@ -4,7 +4,7 @@ import SQL from 'sql-template-strings';
 import type { Video } from "./get"
 
 // gets a list of videos that a user has posted that are public
-export const getAllVideo = async ({ userId }: { userId: string }): Promise<Video> => db.get(SQL`
+export const getUserVideo = async ({ userId }: { userId: string }): Promise<Video> => db.get(SQL`
 
   SELECT *
   FROM videos

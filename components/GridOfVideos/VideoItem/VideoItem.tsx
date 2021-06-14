@@ -4,13 +4,23 @@ import Link from "next/link";
 import { Thumbnail } from "./Thumbnail";
 import { Details } from "./Details";
 
-export const VideoItem = () => {
+interface VideoitemProps {
+  videoId: string;
+  videoName: string;
+  userName: string;
+  timestamp: number;
+  length: number;
+  thumbnailUrl: string;
+  profilePicUrl: string;
+}
+
+export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailUrl, profilePicUrl, userName }: VideoitemProps) => {
 
   return (
-    <Link href={`/video/${1}`}>
+    <Link href={`/video/${videoId}`}>
       <Container>
-        <Thumbnail />
-        <Details />
+        <Thumbnail {...{ length, thumbnailUrl }} />
+        <Details {...{ videoName, timestamp, profilePicUrl, userName }} />
       </Container>
     </Link>
   );

@@ -1640,6 +1640,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/javascript-time-ago@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@types/javascript-time-ago@npm:2.0.2"
+  checksum: 5adec8727760513c36804f24a48c950cb67d3f39365c910d923179e7807574a8a15bdc0b20b6bc9c6b40e6b877ab0e756adc249aee844bd9859b73f17a0e22d4
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.6":
   version: 7.0.7
   resolution: "@types/json-schema@npm:7.0.7"
@@ -2364,6 +2371,7 @@ __metadata:
   resolution: "budget-YouTube@workspace:."
   dependencies:
     "@babel/core": ^7.14.3
+    "@types/javascript-time-ago": ^2.0.2
     "@types/node": ^15.12.2
     "@types/react": ^17.0.10
     "@types/react-dom": ^17.0.7
@@ -2373,6 +2381,7 @@ __metadata:
     babel-loader: ^8.2.2
     babel-plugin-styled-components: ^1.12.0
     bootstrap: 4.6.0
+    javascript-time-ago: ^2.3.6
     next: ^10.2.3
     next-auth: ^3.25.0
     next-pwa: ^5.2.21
@@ -4197,6 +4206,15 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"javascript-time-ago@npm:^2.3.6":
+  version: 2.3.6
+  resolution: "javascript-time-ago@npm:2.3.6"
+  dependencies:
+    relative-time-format: ^1.0.5
+  checksum: c2749ee89e93be48b801d064bfc4eaefe9fe7c3c3c7d14ba3c102ffe44291b621f665a6e081ca92246fc7e31192ba067d68c5f3424c3aaf603196a5c35a440fa
+  languageName: node
+  linkType: hard
+
 "jest-worker@npm:27.0.0-next.5":
   version: 27.0.0-next.5
   resolution: "jest-worker@npm:27.0.0-next.5"
@@ -5998,6 +6016,13 @@ fsevents@~2.3.1:
   bin:
     regjsparser: bin/parser
   checksum: ad533fe6ce6d156efb2a144a61166747317598069530205f9d9e3414e2642ff63eb59dbd7d01fcbc0daf18115b510d6494fa49ce30491f76c323695f3a16f2db
+  languageName: node
+  linkType: hard
+
+"relative-time-format@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "relative-time-format@npm:1.0.5"
+  checksum: 76559fe858dc2e40ee17db009fee50f1d91d37daa393f54c4c9618d8657ffcc85663ce2d5cfa1d5210106614c6e65a9f05aae2989109046847a4b6d2b365e571
   languageName: node
   linkType: hard
 

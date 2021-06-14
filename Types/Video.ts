@@ -1,15 +1,15 @@
 import type { User, Comment } from "."
 
 export interface Video {
-  id: string;
-  title: string;
+  videoId: string;
+  videoName: string;
   description: string;
   thumbnailUrl: string;
-  user: User;
+  userId: string;
   timestamp: Date;
-  views: number;
+  // views: number;
   length: number;
-  likes: number;
-  dislikes: number;
-  comments: Comment[];
+  // likes: number;
+  // dislikes: number;
+  // comments: Comment[];
 }

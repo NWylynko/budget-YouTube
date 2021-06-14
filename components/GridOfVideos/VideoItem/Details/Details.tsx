@@ -1,18 +1,31 @@
 import styled from "styled-components";
 // import Image from "next/image";
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+TimeAgo.addDefaultLocale(en)
+const timeAgo = new TimeAgo('en-US')
 
-export const Details = () => {
+interface DetailsProps {
+  videoName: string;
+  userName: string;
+  timestamp: number;
+  profilePicUrl: string;
+}
+
+export const Details = ({profilePicUrl, videoName, userName, timestamp}: DetailsProps) => {
   return (
     <Container>
       <ImageContainer>
         <StyledImage
-          src="https://via.placeholder.com/36x36"
+          src={profilePicUrl}
+          height={36}
+          width={36}
         />
       </ImageContainer>
       <TextContainer>
-        <span>Video Name</span>
-        <SubText>User Name</SubText>
-        <SubText>666K views • 13 hours ago</SubText>
+        <span>{videoName}</span>
+        <SubText>{userName}</SubText>
+        <SubText>666K views • {timeAgo.format(timestamp)}</SubText>
       </TextContainer>
     </Container>
   );

@@ -1,7 +1,18 @@
 import { GridOfVideos } from "../components/GridOfVideos"
+import { getAllVideo } from '../Database/video/getAll';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
-export default function HomePage() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const videos = await getAllVideo()
+
+  return {
+    props: { videos }, // will be passed to the page component as props
+  }
+}
+
+export default function HomePage({ videos }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <GridOfVideos />
+    <GridOfVideos videos={videos} />
   )
 }

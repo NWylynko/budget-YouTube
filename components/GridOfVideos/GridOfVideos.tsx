@@ -1,19 +1,22 @@
 import styled from "styled-components";
 import { VideoItem } from "./VideoItem"
 
-export const GridOfVideos = () => {
+interface Video {
+  videoId: string;
+  videoName: string;
+  userName: string;
+  timestamp: number;
+  length: number;
+  thumbnailUrl: string;
+  profilePicUrl: string;
+}
+
+export const GridOfVideos = ({ videos }: { videos: Video[] }) => {
   return (
     <GridContainer>
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
-      <VideoItem />
+      {videos.map((video) => (
+        <VideoItem key={video.videoId} {...video} />
+      ))}
     </GridContainer>
   )
 }

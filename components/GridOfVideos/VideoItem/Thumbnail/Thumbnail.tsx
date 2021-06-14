@@ -1,20 +1,37 @@
 import styled from "styled-components";
 // import Image from "next/image";
 
-export const Thumbnail = () => {
+interface ThumbnailProps { length: number; thumbnailUrl: string; }
+
+export const Thumbnail = ({ length, thumbnailUrl }: ThumbnailProps) => {
   return (
     <Container>
       <img
-        src="https://via.placeholder.com/320x180"
+        src={thumbnailUrl}
+        width={320}
+        height={180}
       />
       <TimeStampContainer>
         <TimeStamp>
-          4:56
+          {Length(length)}
         </TimeStamp>
       </TimeStampContainer>
     </Container>
   );
 };
+
+const Length = (timestamp: number) => {
+  const seconds = Math.floor(timestamp / 1000);
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const minutesAndSeconds = `${minutes - hours * 60}:${seconds - minutes * 60}`
+
+  if (hours > 0) {
+    return `${hours}:${minutesAndSeconds}`
+  }
+
+  return minutesAndSeconds
+}
 
 const Container = styled.div`
 position: relative;
