@@ -32,7 +32,7 @@ export const addHistory = async ({ videoId, userId }: { videoId: string, userId:
       );
     `);
 
-    console.log(await calculateViews({ videoId }))
+    await calculateViews({ videoId });
 
   }
 

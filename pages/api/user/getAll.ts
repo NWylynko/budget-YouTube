@@ -1,9 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { addTestData } from "../../../Database/tools/addTestData"
+import { getAllUser } from "../../../Database/user/getAll"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
-
-  await addTestData()
-
-  res.status(200).json({ done: "success" })
+  res.status(200).json(await getAllUser())
 }

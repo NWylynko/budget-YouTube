@@ -2101,6 +2101,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.21.1":
+  version: 0.21.1
+  resolution: "axios@npm:0.21.1"
+  dependencies:
+    follow-redirects: ^1.10.0
+  checksum: 864fb7b5d077d236737f10adca53bf451a93f35a15271f56fba8da07265a02d26b7d881b935a6697dc6adb0549ea3e56d2eecb403edaa3bb78f6479901c10f69
+  languageName: node
+  linkType: hard
+
 "babel-loader@npm:^8.2.2":
   version: 8.2.2
   resolution: "babel-loader@npm:8.2.2"
@@ -2378,6 +2387,7 @@ __metadata:
     "@types/sqlite3": ^3.1.7
     "@types/styled-components": ^5.1.10
     "@types/uuid": ^8.3.0
+    axios: ^0.21.1
     babel-loader: ^8.2.2
     babel-plugin-styled-components: ^1.12.0
     bootstrap: 4.6.0
@@ -2398,6 +2408,7 @@ __metadata:
     sqlite: ^4.0.23
     sqlite3: ^5.0.2
     styled-components: ^5.3.0
+    swr: ^0.5.6
     typescript: ^4.3.2
     uuid: ^8.3.2
   languageName: unknown
@@ -3038,6 +3049,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dequal@npm:2.0.2":
+  version: 2.0.2
+  resolution: "dequal@npm:2.0.2"
+  checksum: 3b5b019a873da282a25512c632c077e5e8e2a019e71c5b6968836443b861e44176ee3934facfecdc14994d553c1ff4a6c7232278d6aef87baf65e2413d41760c
+  languageName: node
+  linkType: hard
+
 "des.js@npm:^1.0.0":
   version: 1.0.1
   resolution: "des.js@npm:1.0.1"
@@ -3396,6 +3414,16 @@ __metadata:
     locate-path: ^5.0.0
     path-exists: ^4.0.0
   checksum: d612d28e02eaca6cd7128fc9bc9b456e2547a3f9875b2b2ae2dbdc6b8cec52bc2885efcb3ac6c18954e838f4c8e20565d196784b190e1d38565f9dc39aade722
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.10.0":
+  version: 1.14.1
+  resolution: "follow-redirects@npm:1.14.1"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 761a18699688b19d66b3e9199ecaf9cd39ede953f3529299c7fca4190b27b855c17c491170977844d5db5e169ffc35ebae999bb0833e9c9c61988d19c20ae7ab
   languageName: node
   linkType: hard
 
@@ -6804,6 +6832,17 @@ fsevents@~2.3.1:
   dependencies:
     has-flag: ^4.0.0
   checksum: 0219f5c91753fea8dc8046cd4b18d39458b5dc0c6421c67c1072209faae9ba93b89283252e3b05d5c18901fd9f8b95001e3247fb93e2265f66d584a676522c75
+  languageName: node
+  linkType: hard
+
+"swr@npm:^0.5.6":
+  version: 0.5.6
+  resolution: "swr@npm:0.5.6"
+  dependencies:
+    dequal: 2.0.2
+  peerDependencies:
+    react: ^16.11.0 || ^17.0.0
+  checksum: 3522cc3de9200d4209b97ac333181d7b3c040fba770b03ff41b226a2839551141c7e71080aa700b442ff8a6537d11abdf4182a4272b8e5fe57df6a1e9c2fb7fa
   languageName: node
   linkType: hard
 

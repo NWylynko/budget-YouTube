@@ -2,6 +2,9 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Layout } from "../components/layout"
 import Head from "next/head"
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Cookies from "js-cookie"
+import SelectDemoUser from "../components/SelectDemoUser";
+import { useState, useEffect } from 'react';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -28,6 +31,24 @@ const theme = {
 };
  
 function MyApp({ Component, pageProps }) {
+
+  const [showSelect, setShowSelect] = useState(false)
+
+  useEffect(() => {
+    setShowSelect(Cookies.get("userId") === undefined)
+  }, [])
+
+  const handleSelectUser = (userId: string) => {
+    Cookies.set("userId", userId);
+    setShowSelect(false)
+  }
+
+  if (showSelect) {
+    return (
+      <SelectDemoUser onClick={handleSelectUser} />
+    )
+  }
+
   return (
     <>
       <Head>
