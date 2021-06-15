@@ -21,7 +21,7 @@ export const addVote = async ({ videoId, userId, type }: newVote) => {
     ) VALUES (
       ${videoId},
       ${userId},
-      ${type},
+      ${type}
     );
 
   `);
