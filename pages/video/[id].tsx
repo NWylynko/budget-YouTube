@@ -17,13 +17,20 @@ import { getSubscriberCount } from '../../Database/subscriber/getCount'
 import { getSubscriber } from '../../Database/subscriber/get'
 import { getWatched } from '../../Database/history/get';
 import { addHistory } from '../../Database/history/add';
+import { getVideoAccess } from '../../Database/video/getAccess'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  console.time()
-
   const videoId = context.params.id as string
   const userId = "2"
+
+  const access = await getVideoAccess({ videoId });
+
+  if (access.access === "private" && access.userId !== userId) {
+    return {
+      props: { error: "you don't have access to this video" },
+    }
+  }
 
   const video = await getVideo({ videoId })
   const comments = await getComment({ videoId }) || []
@@ -34,14 +41,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { watched } = await getWatched({ userId, videoId }) || { watched: 0 }
   await addHistory({ videoId, userId });
 
-  console.timeEnd()
-
   return {
     props: { video, comments, vote, videoUser, subCount, subscribed, watched },
   }
 }
 
-export default function VideoPage({ video, comments, vote, videoUser, subCount, subscribed, watched }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function VideoPage({ video, comments, vote, videoUser, subCount, subscribed, watched, error }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+  if (error) {
+    <Container>
+      <span>{error}</span>
+    </Container>
+  }
 
   console.log({video, comments, vote, videoUser, subCount, subscribed, watched})
 
