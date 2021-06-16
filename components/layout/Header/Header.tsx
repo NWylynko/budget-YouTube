@@ -21,7 +21,7 @@ export const Header = () => {
         <div><BiVideoPlus size={36} color="#606060" /></div>
       </Link>
       <Link href={`/user/1`}>
-        <StyledProfilePic src="https://via.placeholder.com/48" />
+        <StyledProfilePic src="https://via.placeholder.com/48" height={48} width={48} />
       </Link>
     </StyledHeader>
   )
