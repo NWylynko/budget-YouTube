@@ -5,6 +5,7 @@ import { BsUpload } from "react-icons/bs";
 import { Button } from "../components/Styles/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ProgressBar from "react-bootstrap/ProgressBar"
+import { axios } from "../ClientApi"
 
 type FormValues = {
   title: string;
@@ -14,14 +15,37 @@ type FormValues = {
 
 export default function newVideoPage() {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0)
+
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
+    console.log(data)
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files
     setIsUploading(true);
-    console.log(acceptedFiles);
+    console.log(acceptedFiles)
+    let formData = new FormData()
+    formData.append("file", acceptedFiles[0])
+    axios.post("/video/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: data => {
+        //Set the progress value to show the progress bar
+        const percentage = Math.round((100 * data.loaded) / data.total)
+        console.log(percentage)
+        setUploadProgress(percentage)
+      },
+      timeout: 1000 * 60 * 60 * 24 * 7
+    })
+
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
 
   if (!isUploading) {
     return (
@@ -42,15 +66,10 @@ export default function newVideoPage() {
     );
   }
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
-  const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
-    console.log(data)
-  };
-
   return (
     <>
       <h2>Video Name</h2>
-      <ProgressBar animated now={45} />
+      <ProgressBar animated now={uploadProgress} />
       <ContainerForm onSubmit={handleSubmit(onSubmit)}>
         <h3>Details</h3>
         <Label>Title</Label>
