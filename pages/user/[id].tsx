@@ -3,35 +3,34 @@ import { GridOfVideos } from "../../components/GridOfVideos";
 import { SubscribeButton } from "../../components/Styles/SubscribeButton"
 
 import { getUserAllVideo } from '../../Database/video/getUserAll'
-import { getComment } from '../../Database/comment/get';
-import { getVote } from '../../Database/vote/get';
 import { getUser } from '../../Database/user/get'
 import { getSubscriberCount } from '../../Database/subscriber/getCount'
 import { getSubscriber } from '../../Database/subscriber/get'
-import { getWatched } from '../../Database/history/get';
-import { addHistory } from '../../Database/history/add';
-import { getVideoAccess } from '../../Database/video/getAccess'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const requestedUserId = context.params.id as string
-  const userId = "2"
+  const { userId } = context.req.cookies
 
-  const videos = await getUserAllVideo({ userId: requestedUserId })
-  const requestedUser = await getUser({ userId: requestedUserId })
+  const requestedUser = await getUser({ userId: requestedUserId }) || null
+
+  if (requestedUser === null) {
+    return {
+      notFound: true,
+    }
+  }
+
   const { subscribers } = await getSubscriberCount({ userId: requestedUserId })
   const { subscribed } = await getSubscriber({ subscriber: userId, subscribee: requestedUserId })
+  const videos = await getUserAllVideo({ userId: requestedUserId })
 
   return {
     props: { videos, requestedUser, subscribers, subscribed },
   }
 }
 
-export default function UserPage({ videos, requestedUser, subscribers, subscribed }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  
-  console.log({videos, requestedUser, subscribers, subscribed})
-  
+export default function UserPage({ videos, requestedUser, subscribers, subscribed }: InferGetServerSidePropsType<typeof getServerSideProps>) {  
   return (
     <Container>
       <UserBar>
