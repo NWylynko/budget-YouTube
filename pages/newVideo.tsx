@@ -13,7 +13,7 @@ type FormValues = {
 };
 
 export default function newVideoPage() {
-  const [isUploading, setIsUploading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files

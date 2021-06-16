@@ -79,7 +79,7 @@ export default function VideoPage({ video, comments, vote, videoUser, subCount, 
         </ProfilePicContainer>
         <CreatorSubInfo>
           <Link href={`/user/${videoUser.userId}`}><UserNameTitle>{videoUser.userName}</UserNameTitle></Link>
-          <SubscriberCount>{subCount.subscibers} subscribers</SubscriberCount>
+          <SubscriberCount>{subCount.subscribers} subscribers</SubscriberCount>
           <VideoDescription>{video.description}</VideoDescription>
         </CreatorSubInfo>
         <SubscribeButton>Subscribe</SubscribeButton>
