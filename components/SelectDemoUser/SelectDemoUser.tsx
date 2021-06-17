@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { useApi } from "../../ClientApi";
+import { useApi, axios } from "../../ClientApi";
+import { Button } from "../Styles/Button";
 
 interface User {
   userId: string;
@@ -14,6 +15,10 @@ interface SelectDemoUserProps {
 
 export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
   const { data: users } = useApi<User[]>("/user/getAll");
+
+  const onResetDatabase = async () => {
+    console.log(await axios.get('/database/reset'))
+  }
 
   return (
     <Container>
@@ -35,6 +40,7 @@ export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
       ) : (
         <span>Loading users...</span>
       )}
+      <Button onClick={onResetDatabase}>Reset Database</Button>
     </Container>
   );
 };
