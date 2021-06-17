@@ -3,7 +3,8 @@ import useSWR from 'swr'
 
 
 export const axios = Axios.create({
-  baseURL: 'http://localhost:3000/api/',
+  // baseURL: 'http://localhost:3000/api/',
+  baseURL: '/api/',
   timeout: 1000,
 });
 

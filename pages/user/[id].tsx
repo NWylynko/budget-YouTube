@@ -35,7 +35,7 @@ export default function UserPage({ videos, requestedUser, subscribers, subscribe
     <Container>
       <UserBar>
         <div>
-          <StyledProfilePic src={`http://localhost:3000/api/image/get?imageId=${requestedUser.profilePicId}&height=80&width=80&format=webp`} height={80} width={80} />
+          <StyledProfilePic src={`/api/image/get?imageId=${requestedUser.profilePicId}&height=80&width=80&format=webp`} height={80} width={80} />
         </div>
         <div>
           <UserName>{requestedUser.userName}</UserName>

@@ -16,7 +16,7 @@ export const Details = ({profilePicId, videoName, userName, timestamp, views}: D
       {profilePicId && (
         <ImageContainer>
         <StyledImage
-          src={`http://localhost:3000/api/image/get?imageId=${profilePicId}&height=36&width=36&format=webp`}
+          src={`/api/image/get?imageId=${profilePicId}&height=36&width=36&format=webp`}
           height={36}
           width={36}
         />

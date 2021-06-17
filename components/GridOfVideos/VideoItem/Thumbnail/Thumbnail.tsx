@@ -7,7 +7,7 @@ export const Thumbnail = ({ length, thumbnailId }: ThumbnailProps) => {
   return (
     <Container>
       <img
-        src={`http://localhost:3000/api/image/get?imageId=${thumbnailId}&height=180&width=320&format=webp`}
+        src={`/api/image/get?imageId=${thumbnailId}&height=180&width=320&format=webp`}
         width={320}
         height={180}
       />

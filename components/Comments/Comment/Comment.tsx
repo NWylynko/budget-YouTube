@@ -22,7 +22,7 @@ export const Comment = ({
     <Container>
       <ProfilePicContainer>
         <StyledImg
-          src={`http://localhost:3000/api/image/get?imageId=${profilePicId}&height=40&width=40&format=webp`}
+          src={`/api/image/get?imageId=${profilePicId}&height=40&width=40&format=webp`}
           height={40}
           width={40}
         />

@@ -24,7 +24,7 @@ export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
             onClick(user.userId);
           }} >
             <div>
-              <Image src={`http://localhost:3000/api/image/get?imageId=${user.profilePicId}&height=64&width=64&format=webp`} height={64} width={64} />
+              <Image src={`/api/image/get?imageId=${user.profilePicId}&height=64&width=64&format=webp`} height={64} width={64} />
             </div>
             <Details>
               <h4>{user.userName}</h4>
