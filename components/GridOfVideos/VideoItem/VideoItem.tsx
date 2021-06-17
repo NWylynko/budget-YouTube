@@ -10,18 +10,18 @@ interface VideoitemProps {
   userName: string;
   timestamp: number;
   length: number;
-  thumbnailUrl: string;
-  profilePicUrl: string;
+  thumbnailId: string;
+  profilePicId: string;
   views: number;
 }
 
-export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailUrl, profilePicUrl, userName, views }: VideoitemProps) => {
+export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, profilePicId, userName, views }: VideoitemProps) => {
 
   return (
     <Link href={`/video/${videoId}`}>
       <Container>
-        <Thumbnail {...{ length, thumbnailUrl }} />
-        <Details {...{ videoName, timestamp, profilePicUrl, userName, views }} />
+        <Thumbnail {...{ length, thumbnailId }} />
+        <Details {...{ videoName, timestamp, profilePicId, userName, views }} />
       </Container>
     </Link>
   );

@@ -12,7 +12,7 @@ export const updateVideo = async ({videoId, newVideo}: {videoId: string, newVide
 
   const updatedVideo = { ...video, ...newVideo }
 
-  const { videoName, description, access, thumbnailUrl, length } = updatedVideo
+  const { videoName, description, access, thumbnailId: thumbnailId, length } = updatedVideo
 
   await db.run(SQL`
 
@@ -21,7 +21,7 @@ export const updateVideo = async ({videoId, newVideo}: {videoId: string, newVide
     "videoName" = ${videoName},
     "description" = ${description},
     "access" = ${access},
-    "thumbnailUrl" = ${thumbnailUrl},
+    "thumbnailId" = ${thumbnailId},
     "length" = ${length}
   WHERE "videoId" = ${videoId}
 

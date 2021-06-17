@@ -75,7 +75,7 @@ export default function VideoPage({ video, comments, vote, videoUser, subCount, 
       </StatsBar>
       <CreatorInfo>
         <ProfilePicContainer>
-          <StyledProfilePic src={videoUser.profilePicUrl} width={48} height={48} />
+          <StyledProfilePic src={`http://localhost:3000/api/image/get?imageId=${videoUser.profilePicId}&height=48&width=48&format=webp`} width={48} height={48} />
         </ProfilePicContainer>
         <CreatorSubInfo>
           <Link href={`/user/${videoUser.userId}`}><UserNameTitle>{videoUser.userName}</UserNameTitle></Link>

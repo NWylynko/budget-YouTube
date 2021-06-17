@@ -5,9 +5,9 @@ import type { User } from "./get"
 import { getUser } from "./get"
 
 // updates one or more of the information about a user
-export const removeUser = async ({ userId, userName, email, ProfilePicUrl }: Partial<User>) => {
+export const updateUser = async ({ userId, userName, email, profilePicId }: Partial<User>) => {
 
-  const numOfItemsToUpdate = [userName, email, ProfilePicUrl].filter(value => value !== undefined).length
+  const numOfItemsToUpdate = [userName, email, profilePicId].filter(value => value !== undefined).length
 
   const sql = SQL`
     
@@ -15,7 +15,7 @@ export const removeUser = async ({ userId, userName, email, ProfilePicUrl }: Par
     SET 
       ${userName && '"userName"=' + userName + (numOfItemsToUpdate === 1 ? '' : ',')}
       ${email && '"email"=' + email + (numOfItemsToUpdate === 2 ? '' : ',')}
-      ${ProfilePicUrl && '"ProfilePicUrl"=' + ProfilePicUrl + (numOfItemsToUpdate === 3 ? '' : ',')}
+      ${profilePicId && '"profilePicId"=' + profilePicId + (numOfItemsToUpdate === 3 ? '' : ',')}
     WHERE "userId" = ${userId}
 
   `

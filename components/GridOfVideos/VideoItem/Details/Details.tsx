@@ -6,22 +6,24 @@ interface DetailsProps {
   videoName: string;
   userName: string;
   timestamp: number;
-  profilePicUrl: string;
+  profilePicId?: string;
   views: number;
 }
 
-export const Details = ({profilePicUrl, videoName, userName, timestamp, views}: DetailsProps) => {
+export const Details = ({profilePicId, videoName, userName, timestamp, views}: DetailsProps) => {
   return (
     <Container>
-      <ImageContainer>
+      {profilePicId && (
+        <ImageContainer>
         <StyledImage
-          src={profilePicUrl}
+          src={`http://localhost:3000/api/image/get?imageId=${profilePicId}&height=36&width=36&format=webp`}
           height={36}
           width={36}
         />
       </ImageContainer>
+      )}
       <TextContainer>
-        <span>{videoName}</span>
+        <Title>{videoName}</Title>
         <SubText>{userName}</SubText>
         <SubText>{views} views • {formatDistanceToNow(timestamp)}</SubText>
       </TextContainer>
@@ -30,13 +32,14 @@ export const Details = ({profilePicUrl, videoName, userName, timestamp, views}: 
 };
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: calc(36px + 10px + 5px) auto;
-  margin: 5px;
+  display: flex;
+  flex-direction: row;
+  margin: 6px;
 `;
 
 const ImageContainer = styled.div`
-  margin: 5px;
+  margin: 12px;
+  margin-left: 6px;
   min-height: 36px;
   min-width: 36px;
 `;

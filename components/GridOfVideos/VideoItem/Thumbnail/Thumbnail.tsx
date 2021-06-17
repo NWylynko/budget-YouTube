@@ -1,13 +1,13 @@
 import styled from "styled-components";
 // import Image from "next/image";
 
-interface ThumbnailProps { length: number; thumbnailUrl: string; }
+interface ThumbnailProps { length: number; thumbnailId: string; }
 
-export const Thumbnail = ({ length, thumbnailUrl }: ThumbnailProps) => {
+export const Thumbnail = ({ length, thumbnailId }: ThumbnailProps) => {
   return (
     <Container>
       <img
-        src={thumbnailUrl}
+        src={`http://localhost:3000/api/image/get?imageId=${thumbnailId}&height=180&width=320&format=webp`}
         width={320}
         height={180}
       />

@@ -1,21 +1,31 @@
 import styled from "styled-components";
-import Link from "next/link"
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import Link from "next/link";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 interface Comment {
   commentId: string;
   message: string;
-  profilePicUrl: string;
+  profilePicId: string;
   timestamp: number;
   userId: string;
   userName: string;
 }
 
-export const Comment = ({ message, profilePicUrl, timestamp, userId, userName }: Comment) => {
+export const Comment = ({
+  message,
+  profilePicId,
+  timestamp,
+  userId,
+  userName,
+}: Comment) => {
   return (
     <Container>
       <ProfilePicContainer>
-        <StyledImg src={profilePicUrl} height={40} width={40} />
+        <StyledImg
+          src={`http://localhost:3000/api/image/get?imageId=${profilePicId}&height=40&width=40&format=webp`}
+          height={40}
+          width={40}
+        />
       </ProfilePicContainer>
       <SubContainer>
         <Horizontal>
@@ -58,7 +68,7 @@ const UserName = styled.h4`
 
 const TimeStamp = styled.span`
   margin: 6px;
-  color: ${props => props.theme.colors.lightText};
+  color: ${(props) => props.theme.colors.lightText};
 `;
 
 const UserMessage = styled.span`

@@ -9,7 +9,7 @@ export interface Video {
   access: "public" | "unlisted" | "private";
   timestamp: number;
   length: number;
-  thumbnailUrl: string;
+  thumbnailId: string;
 }
 
 // gets all the information required to display a video to a user

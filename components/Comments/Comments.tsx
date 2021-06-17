@@ -4,7 +4,7 @@ import { Comment } from "./Comment"
 interface Comment {
   commentId: string;
   message: string;
-  profilePicUrl: string;
+  profilePicId: string;
   timestamp: number;
   userId: string;
   userName: string;

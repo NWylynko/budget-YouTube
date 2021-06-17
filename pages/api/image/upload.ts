@@ -7,6 +7,8 @@ import sharp from "sharp";
 import { v4 as uuid } from "uuid";
 import fs from "fs/promises";
 import path from "path";
+import { updateUser } from '../../../Database/user/update';
+import { updateVideo } from '../../../Database/video/update';
 
 const apiRoute = nextConnect({
   // Handle any other HTTP method
@@ -15,49 +17,29 @@ const apiRoute = nextConnect({
   },
 });
 
-// cant use ram cuz video files are largeeee
 const ramUploadSpace = multer({ storage: multer.memoryStorage() });
 const uploadMiddleWare = ramUploadSpace.single("file");
 
 const handler = async (req, res: NextApiResponse) => {
-  console.log(req.file);
+  const { userId, videoId, type } = req.query;
 
-  const { userId } = req.query;
-
-  console.log({ userId });
-
-  const image = req.file;
-  const imageId = uuid();
-
-  console.log("convert image to webp");
-
-  // convert image to webp
-  const master = sharp(image.buffer).toFormat("webp").webp();
-
-  console.log("define directory for image");
-
-  // define directory for image
-  const dir = path.join(process.cwd(), `./storage/images/profilePic/${imageId}`);
-
-  console.log("make image directory", dir);
-
-  // make image directory
-  await fs.mkdir(dir, { recursive: true });
-
-  console.log("save master file");
-
-  try {
-    // save master file
-    await master.toFile(`${dir}/master.webp`);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "failed to save master file" });
-    return;
+  // user to update the users profile pic (needs userId)
+  // thumbnail to update video thumbnail pic (needs videoId)
+  // none to do neither, useful to upload image before creating account or video
+  if (!["user", "thumbnail", "none"].includes(type)) {
+    res.status(415).send({ error: "type wrong or not supplied" });
   }
 
-  console.log("return imageId", imageId);
+  const imageBuffer = req.file.buffer;
 
-  res.status(200).json({ imageId });
+  try {
+    const { imageId } = await uploadImage(imageBuffer, { type, videoId, userId });
+    res.status(200).json({ imageId });
+    return;
+  } catch (error) {
+    res.status(500).send({ error });
+    return;
+  }
 };
 
 // Process a POST request
@@ -69,4 +51,57 @@ export const config = {
   api: {
     bodyParser: false, // Disallow body parsing, consume as stream
   },
+};
+
+type ImageOptions = ({
+  type: "user";
+  userId: string;
+  videoId: null;
+} | {
+  type: "thumbnail";
+  videoId: string;
+  userId: null;
+} | {
+  type: "none",
+  videoId: null;
+  userId: null;
+})
+
+export const uploadImage = async (imageBuffer: Buffer, {type, videoId, userId}: ImageOptions) => {
+  const imageId = uuid();
+
+  // convert image to webp
+  const master = sharp(imageBuffer).toFormat("webp").webp();
+
+  // define directory for image
+  const dir = path.join(
+    process.cwd(),
+    `./storage/images/${imageId}`
+  );
+
+  try {
+    // make image directory
+    await fs.mkdir(dir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+    throw new Error("failed to make directory");
+    return;
+  }
+
+  try {
+    // save master file
+    await master.toFile(`${dir}/master.webp`);
+  } catch (error) {
+    console.error(error);
+    throw new Error("failed to save master file");
+    return;
+  }
+
+  if (type === "user") {
+    await updateUser({ userId, profilePicId: imageId })
+  } else if (type === "thumbnail") {
+    await updateVideo({ videoId, newVideo: { thumbnailId: imageId }})
+  }
+
+  return { imageId }
 };

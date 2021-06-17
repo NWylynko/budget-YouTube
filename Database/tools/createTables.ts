@@ -8,7 +8,7 @@ export const createTables = async () => db.exec(SQL`
     "userId"	TEXT NOT NULL UNIQUE,
     "userName"	TEXT NOT NULL,
     "email"	TEXT UNIQUE,
-    "profilePicUrl"	TEXT NOT NULL,
+    "profilePicId"	TEXT,
     PRIMARY KEY("userId")
   );
 
@@ -18,9 +18,9 @@ export const createTables = async () => db.exec(SQL`
     "videoName"	TEXT NOT NULL,
     "description"	TEXT,
     "access"	TEXT NOT NULL,
-    "timestamp"	INTEGER NOT NULL,
+    "timestamp"	INTEGER NOT NULL, 
     "length"	INTEGER,
-    "thumbnailUrl"	TEXT,
+    "thumbnailId"	TEXT,
     "views"	INTEGER NOT NULL DEFAULT 0,
     "viewsLastCalc"	INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY("videoId"),

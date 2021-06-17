@@ -19,7 +19,7 @@ export const getComment = async ({ videoId }: { videoId: string }): Promise<Comm
     "comments"."timestamp", 
     "comments"."message",
     "users"."userName",
-    "users"."profilePicUrl"
+    "users"."profilePicId"
   FROM 
     "comments", "users"
   WHERE 

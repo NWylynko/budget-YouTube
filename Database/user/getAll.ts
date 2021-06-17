@@ -5,7 +5,7 @@ export interface User {
   userId: string;
   userName: string;
   email: string;
-  ProfilePicUrl: string;
+  ProfilePicId: string;
 }
 
 // gets a list of all the users in the database

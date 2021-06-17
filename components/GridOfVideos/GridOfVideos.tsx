@@ -7,8 +7,8 @@ interface Video {
   userName: string;
   timestamp: number;
   length: number;
-  thumbnailUrl: string;
-  profilePicUrl: string;
+  thumbnailId: string;
+  profilePicId: string;
   views: number;
 }
 

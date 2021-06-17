@@ -8,7 +8,7 @@ interface Vote {
 }
 
 // if the user changes there mind on a vote the can change it
-export const updateVideo = async ({ videoId, userId, type }: Vote) => {
+export const updateVote = async ({ videoId, userId, type }: Vote) => {
 
   await db.run(SQL`
   

@@ -5,7 +5,7 @@ export interface User {
   userId: string;
   userName: string;
   email: string;
-  ProfilePicUrl: string;
+  profilePicId: string;
 }
 
 // gets the user information about a user

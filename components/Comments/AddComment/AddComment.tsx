@@ -8,7 +8,7 @@ export const AddComment = () => {
   return (
     <Container>
       <ImageContainer>
-        <StyledImage src="https://via.placeholder.com/40" />
+        <StyledImage src="https://via.placeholder.com/40" height={40} width={40} />
       </ImageContainer>
       <StyledInput
         value={comment}

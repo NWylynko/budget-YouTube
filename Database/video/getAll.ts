@@ -9,8 +9,8 @@ interface Video {
   access: "public" | "unlisted" | "private";
   timestamp: number;
   length: number;
-  thumbnailUrl: string;
-  profilePicUrl: string;
+  thumbnailId: string;
+  profilePicId: string;
   userName: string;
   views: number;
 }
@@ -22,7 +22,7 @@ export const getAllVideo = async (): Promise<Video[]> => db.all(SQL`
   SELECT 
     videos.*, 
     users.userName, 
-    users.profilePicUrl
+    users.profilePicId
   FROM videos, users
   WHERE access = "public"
   AND videos.userId = users.userId

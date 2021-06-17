@@ -5,14 +5,14 @@ import { v4 as uuid } from "uuid";
 interface newUser {
   userName: string;
   email: string;
-  profilePicUrl?: string;
+  profilePicId: string;
 }
 
 // creates a new user
 export const addUser = async ({
   userName,
   email,
-  profilePicUrl = "https://via.placeholder.com/100",
+  profilePicId,
 }: newUser) => {
   const newId = uuid();
 
@@ -22,15 +22,15 @@ export const addUser = async ({
       "userId",
       "userName",
       "email",
-      "profilePicUrl"
+      "profilePicId"
     ) VALUES (
       ${newId},
       ${userName},
       ${email},
-      ${profilePicUrl}
+      ${profilePicId}
     );
 
   `);
 
-  return { userId: newId, userName, email, profilePicUrl }
+  return { userId: newId, userName, email, profilePicId }
 };
