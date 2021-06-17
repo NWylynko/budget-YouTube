@@ -25,7 +25,6 @@ apiRoute
   .use(uploadMiddleWare)
   .post(handler);
 
-
 export default apiRoute;
 
 export const config = {

@@ -23,29 +23,41 @@ export default function newVideoPage() {
     console.log(data)
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles) => {
     // Do something with the files
+
+    // change the page over to uploading screen
     setIsUploading(true);
-    console.log(acceptedFiles)
-    let formData = new FormData()
+
+    // create form and add the video to it
+    const formData = new FormData()
     formData.append("file", acceptedFiles[0])
-    axios.post("/video/upload", formData, {
+
+    // upload the video to the api
+    await axios.post("/video/upload", formData, {
+
+      // this content type needs to be defined to tell the api what the client is sending
       headers: {
         "Content-Type": "multipart/form-data",
       },
+
+      // to provide the user feedback we listen to the onUploadProgress
       onUploadProgress: data => {
         //Set the progress value to show the progress bar
         const percentage = Math.round((100 * data.loaded) / data.total)
-        console.log(percentage)
         setUploadProgress(percentage)
       },
+
+      // timeout is default 1s, great for normal requests
+      // but uploading a large video sadly takes longer than 1 second
+      // here I set the timeout to 1 week, while this might seem extreme
+      // lots of people have slow wifi and uploading a video can take many hours
       timeout: 1000 * 60 * 60 * 24 * 7
     })
 
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
 
   if (!isUploading) {
     return (
