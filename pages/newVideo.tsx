@@ -6,6 +6,7 @@ import { Button } from "../components/Styles/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ProgressBar from "react-bootstrap/ProgressBar"
 import { axios } from "../ClientApi"
+import Cookies from "js-cookie"
 
 type FormValues = {
   title: string;
@@ -17,6 +18,7 @@ export default function newVideoPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0)
 
+  const userId = Cookies.get("userId")
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
@@ -34,7 +36,7 @@ export default function newVideoPage() {
     formData.append("file", acceptedFiles[0])
 
     // upload the video to the api
-    await axios.post("/video/upload", formData, {
+    await axios.post(`/image/upload?userId=${userId}`, formData, {
 
       // this content type needs to be defined to tell the api what the client is sending
       headers: {
