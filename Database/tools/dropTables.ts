@@ -1,6 +1,6 @@
 import db from "../db";
 import fs from "fs/promises";
-import Path from "path";
+import path from "path";
 import SQL from "sql-template-strings";
 
 export const dropTables = async () => {
@@ -14,4 +14,8 @@ export const dropTables = async () => {
     drop table if exists users;
   
   `);
+
+  const imagePath = path.join(process.cwd(), `./storage`);
+
+  await fs.rm(imagePath, { recursive: true, force: true })
 };

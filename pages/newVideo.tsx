@@ -3,63 +3,107 @@ import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import { BsUpload } from "react-icons/bs";
 import { Button } from "../components/Styles/Button";
-import { useForm, SubmitHandler } from "react-hook-form";
-import ProgressBar from "react-bootstrap/ProgressBar"
-import { axios } from "../ClientApi"
-import Cookies from "js-cookie"
-
-type FormValues = {
-  title: string;
-  description: string;
-  access: "public" | "unlisted" | "private";
-};
+import ProgressBar from "react-bootstrap/ProgressBar";
+import { axios } from "../ClientApi";
+import Cookies from "js-cookie";
+import io from 'socket.io-client'
+import { useEffect } from 'react'
 
 export default function newVideoPage() {
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const userId = Cookies.get("userId")
+  const userId = Cookies.get("userId");
+  const [videoId, setVideoId] = useState("");
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
-  const onSubmit: SubmitHandler<FormValues> = (data: FormValues) => {
-    console.log(data)
+  const [videoName, setVideoName] = useState("");
+  const [description, setDescription] = useState("");
+  const [access, setAccess] = useState("");
+
+  const [connectedToProgress, setConnectedToProgress] = useState(false)
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const data = { videoName, description, access };
+    console.log(data);
+    console.log(e.target.value);
   };
 
-  const onDrop = useCallback(async (acceptedFiles) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     // Do something with the files
+
+    const videoFile = acceptedFiles[0];
+
+    console.log(videoFile);
+
+    const videoFileNameArray = videoFile.name.split(".");
+
+    videoFileNameArray.pop();
+
+    setVideoName(videoFileNameArray.join(""));
 
     // change the page over to uploading screen
     setIsUploading(true);
 
     // create form and add the video to it
-    const formData = new FormData()
-    formData.append("file", acceptedFiles[0])
+    const formData = new FormData();
+    formData.append("file", videoFile);
 
     // upload the video to the api
-    await axios.post(`/image/upload?userId=${userId}`, formData, {
-
+    const { data } = await axios.post(`/video/upload?userId=${userId}`, formData, {
       // this content type needs to be defined to tell the api what the client is sending
       headers: {
         "Content-Type": "multipart/form-data",
       },
 
       // to provide the user feedback we listen to the onUploadProgress
-      onUploadProgress: data => {
+      onUploadProgress: (data) => {
         //Set the progress value to show the progress bar
-        const percentage = Math.round((100 * data.loaded) / data.total)
-        setUploadProgress(percentage)
+        const percentage = Math.round((100 * data.loaded) / data.total);
+        setUploadProgress(percentage);
       },
 
       // timeout is default 1s, great for normal requests
       // but uploading a large video sadly takes longer than 1 second
       // here I set the timeout to 1 week, while this might seem extreme
       // lots of people have slow wifi and uploading a video can take many hours
-      timeout: 1000 * 60 * 60 * 24 * 7
-    })
+      timeout: 1000 * 60 * 60 * 24 * 7,
+    });
 
+    setVideoId(data.videoId)
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+  });
+
+  useEffect(() => {
+    if (isUploading && videoId) {
+      fetch(`/api/video/process`).finally(() => {
+        const socket = io()
+  
+        socket.on('connect', () => {
+          console.log('connect')
+
+          // send the server the videoId so it can send updates
+          socket.emit('video', videoId)
+          setConnectedToProgress(true)
+        })
+  
+        socket.on(videoId, data => {
+          // log the update to console for now
+          console.log(videoId, data)
+        })
+  
+        socket.on('disconnect', () => {
+          console.log('disconnect')
+          setConnectedToProgress(false)
+        })
+      })
+    }
+    
+  }, [isUploading, videoId]) // Added [] as useEffect filter so it will be executed only once, when component is mounted
 
   if (!isUploading) {
     return (
@@ -82,17 +126,32 @@ export default function newVideoPage() {
 
   return (
     <>
-      <h2>Video Name</h2>
+      <h2>{videoName}</h2>
       <ProgressBar animated now={uploadProgress} />
-      <ContainerForm onSubmit={handleSubmit(onSubmit)}>
+      <ContainerForm onSubmit={onSubmit}>
         <h3>Details</h3>
         <Label>Title</Label>
-        <Input {...register("title")} required />
+        <Input
+          value={videoName}
+          onChange={(e) => setVideoName(e.target.value)}
+          required
+        />
         <Label>Description</Label>
-        <TextArea {...register("description")} />
+        <TextArea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
         <Label>Publicity of the video</Label>
         <Horizontal>
-          <Input type="radio" name="access" value="public" id="public"  {...register("access")} required />
+          <Input
+            type="radio"
+            name="access"
+            value="public"
+            id="public"
+            checked={access === "public"}
+            onChange={(e) => setAccess(e.target.value)}
+            required
+          />
           <Label htmlFor="public">
             <Vertical>
               <SelectionHeader>Public</SelectionHeader>
@@ -101,20 +160,42 @@ export default function newVideoPage() {
           </Label>
         </Horizontal>
         <Horizontal>
-          <Input type="radio" name="access" value="unlisted" id="unlisted" {...register("access")} required />
-          <Label htmlFor="unlisted"><Vertical>
+          <Input
+            type="radio"
+            name="access"
+            value="unlisted"
+            id="unlisted"
+            checked={access === "unlisted"}
+            onChange={(e) => setAccess(e.target.value)}
+            required
+          />
+          <Label htmlFor="unlisted">
+            <Vertical>
               <SelectionHeader>Unlisted</SelectionHeader>
-              <SelectionTest>Anyone with the video link can watch your video</SelectionTest>
-            </Vertical></Label>
+              <SelectionTest>
+                Anyone with the video link can watch your video
+              </SelectionTest>
+            </Vertical>
+          </Label>
         </Horizontal>
         <Horizontal>
-          <Input type="radio" name="access" value="private" id="private" {...register("access")} required />
-          <Label htmlFor="private"><Vertical>
+          <Input
+            type="radio"
+            name="access"
+            value="private"
+            id="private"
+            checked={access === "private"}
+            onChange={(e) => setAccess(e.target.value)}
+            required
+          />
+          <Label htmlFor="private">
+            <Vertical>
               <SelectionHeader>Private</SelectionHeader>
               <SelectionTest>Only you can watch the video</SelectionTest>
-            </Vertical></Label>
+            </Vertical>
+          </Label>
         </Horizontal>
-      <Button>Save</Button>
+        <Button>Save</Button>
       </ContainerForm>
     </>
   );
@@ -171,5 +252,5 @@ const SelectionHeader = styled.h4`
 `;
 
 const SelectionTest = styled.span`
-  color: ${props => props.theme.colors.lightText};
+  color: ${(props) => props.theme.colors.lightText};
 `;

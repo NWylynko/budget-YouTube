@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { done: "success" }, // will be passed to the page component as props
+    props: { result: { done: "success" } }, // will be passed to the page component as props
   };
 };
 
@@ -22,7 +22,7 @@ export default function HomePage(
 
   return (
     <>
-      <pre>{props}</pre>
+      <pre>{JSON.stringify(props, null, 2)}</pre>
     </>
   );
 }
