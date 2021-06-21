@@ -1,5 +1,6 @@
 import { reset } from "../Database/tools/reset";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Cookies from "js-cookie"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -15,10 +16,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default function HomePage(
+export default function ResetPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  console.log(props);
+  Cookies.remove("userId")
 
   return (
     <>
