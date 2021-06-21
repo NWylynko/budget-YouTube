@@ -1,8 +1,8 @@
-import ReactPlayer from 'react-player'
 import styled from "styled-components"
 import Link from "next/link"
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import format from 'date-fns/format'
+import { useState } from "react"
 
 import { AiOutlineLike, AiOutlineDislike, AiFillLike, AiFillDislike } from "react-icons/ai"
 
@@ -23,7 +23,7 @@ import { getResolutions } from '../../Database/resolutions/get'
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const videoId = context.params.id as string
-  const userId = "2"
+  const userId = context.req.cookies.userId
 
   const access = await getVideoAccess({ videoId });
 
@@ -50,17 +50,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function VideoPage({ video, comments, vote, videoUser, subCount, subscribed, watched, error, resolutions }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
+  const [height, setHeight] = useState("720")
+
   if (error) {
-    <Container>
-      <span>{error}</span>
-    </Container>
+    return (
+      <Container>
+        <span>{error}</span>
+      </Container>
+    )
   }
 
-  console.log({video, comments, vote, videoUser, subCount, subscribed, watched, resolutions})
+  // console.log({video, comments, vote, videoUser, subCount, subscribed, watched, resolutions})
 
   return (
     <Container>
-      <ReactPlayer url='https://www.youtube.com/watch?v=dQw4w9WgXcQ' width="100%" />
+      <video width="100%" controls autoPlay>
+        <source src={`/api/video/get?videoId=${video.videoId}&height=${height}&fileType=mp4`} type="video/mp4" />
+        <source src={`/api/video/get?videoId=${video.videoId}&height=${height}&fileType=webm`} type="video/webm" />
+      </video>
       <Title>{video.videoName}</Title>
       <StatsBar>
         <StatsInfo>{video.views} views • {format(video.timestamp, "PPP")}</StatsInfo>

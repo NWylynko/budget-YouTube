@@ -6,8 +6,8 @@ import { Button } from "../components/Styles/Button";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import { axios } from "../ClientApi";
 import Cookies from "js-cookie";
-import io from 'socket.io-client'
-import { useEffect } from 'react'
+import io from "socket.io-client";
+import { useEffect } from "react";
 
 export default function newVideoPage() {
   const [isUploading, setIsUploading] = useState(false);
@@ -20,7 +20,7 @@ export default function newVideoPage() {
   const [description, setDescription] = useState("");
   const [access, setAccess] = useState("");
 
-  const [connectedToProgress, setConnectedToProgress] = useState(false)
+  const [connectedToProgress, setConnectedToProgress] = useState(false);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ export default function newVideoPage() {
 
     videoFileNameArray.pop();
 
-    const videoName = videoFileNameArray.join("")
+    const videoName = videoFileNameArray.join("");
 
     setVideoName(videoName);
 
@@ -52,28 +52,31 @@ export default function newVideoPage() {
     formData.append("file", videoFile);
 
     // upload the video to the api
-    const { data } = await axios.post(`/video/upload?userId=${userId}&videoName=${videoName}`, formData, {
+    const { data } = await axios.post(
+      `/video/upload?userId=${userId}&videoName=${videoName}`,
+      formData,
+      {
+        // this content type needs to be defined to tell the api what the client is sending
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
 
-      // this content type needs to be defined to tell the api what the client is sending
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+        // to provide the user feedback we listen to the onUploadProgress
+        onUploadProgress: (data) => {
+          //Set the progress value to show the progress bar
+          const percentage = Math.round((100 * data.loaded) / data.total);
+          setUploadProgress(percentage);
+        },
 
-      // to provide the user feedback we listen to the onUploadProgress
-      onUploadProgress: (data) => {
-        //Set the progress value to show the progress bar
-        const percentage = Math.round((100 * data.loaded) / data.total);
-        setUploadProgress(percentage);
-      },
+        // timeout is default 1s, great for normal requests
+        // but uploading a large video sadly takes longer than 1 second
+        // here I set the timeout to 1 week, while this might seem extreme
+        // lots of people have slow wifi and uploading a video can take many hours
+        timeout: 1000 * 60 * 60 * 24 * 7,
+      }
+    );
 
-      // timeout is default 1s, great for normal requests
-      // but uploading a large video sadly takes longer than 1 second
-      // here I set the timeout to 1 week, while this might seem extreme
-      // lots of people have slow wifi and uploading a video can take many hours
-      timeout: 1000 * 60 * 60 * 24 * 7,
-    });
-
-    setVideoId(data.videoId)
+    setVideoId(data.videoId);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -87,40 +90,27 @@ export default function newVideoPage() {
   // once the videoId and isUploading is true
   useEffect(() => {
     if (isUploading && videoId) {
+      const socket = io();
 
-      // this is not your typical way of opening a socket-io connection
-      // first the client sends a request to /process, with no query
-      // the server doesn't take this as adding a new video to the processing pipeline
-      // it opens up a socket-io server if none is created (so this fetch is only useful
-      // the first time is called every time the server is started)
+      socket.on("connect", () => {
+        console.log("connect");
 
-      fetch(`/api/video/process`).finally(() => {
+        // send the server the videoId so it can send updates
+        socket.emit("video", videoId);
+        setConnectedToProgress(true);
+      });
 
-        // io() can take a url for the socket-io server but since it is running on the
-        // same hostname and port it knows where to find it
-        const socket = io()
-  
-        socket.on('connect', () => {
-          console.log('connect')
+      socket.on(videoId, (data) => {
+        // log the update to console for now
+        console.log(videoId, data);
+      });
 
-          // send the server the videoId so it can send updates
-          socket.emit('video', videoId)
-          setConnectedToProgress(true)
-        })
-  
-        socket.on(videoId, data => {
-          // log the update to console for now
-          console.log(videoId, data)
-        })
-  
-        socket.on('disconnect', () => {
-          console.log('disconnect')
-          setConnectedToProgress(false)
-        })
-      })
+      socket.on("disconnect", () => {
+        console.log("disconnect");
+        setConnectedToProgress(false);
+      });
     }
-    
-  }, [isUploading, videoId]) // Added [] as useEffect filter so it will be executed only once, when component is mounted
+  }, [isUploading, videoId]); // Added [] as useEffect filter so it will be executed only once, when component is mounted
 
   if (!isUploading) {
     return (
