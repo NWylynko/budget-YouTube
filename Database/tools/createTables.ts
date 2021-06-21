@@ -64,4 +64,15 @@ export const createTables = async () => db.exec(SQL`
     PRIMARY KEY("videoId","userId")
   );
 
+  CREATE TABLE "resolutions" (
+    "resolutionId"  TEXT NOT NULL,
+    "videoId"  TEXT NOT NULL,
+    "width"  TEXT NOT NULL,
+    "height"  TEXT NOT NULL,
+    "fileType"  TEXT NOT NULL,
+    "status"  TEXT NOT NULL,
+    FOREIGN KEY("videoId") REFERENCES "videos"("videoId")
+    PRIMARY KEY("videoId"),
+  )
+
 `);

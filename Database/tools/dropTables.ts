@@ -12,6 +12,7 @@ export const dropTables = async () => {
     drop table if exists comments;
     drop table if exists videos;
     drop table if exists users;
+    drop table if exists resolutions;
   
   `);
 
