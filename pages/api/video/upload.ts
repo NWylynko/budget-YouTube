@@ -7,6 +7,8 @@ import fs from "fs/promises";
 import { v4 as uuid } from "uuid";
 import Axios from "axios";
 
+import { addVideo } from "../../../Database/video/add"
+
 const apiRoute = nextConnect({
   // Handle any other HTTP method
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
@@ -30,13 +32,15 @@ interface File {
   size: number;
 }
 
-const handler = async (req, res: NextApiResponse) => {
-  const file: File = req.file;
-  const videoId = uuid();
-  const videoDir = path.join(process.cwd(), `./storage/videos/${videoId}/`);
-  await fs.mkdir(videoDir, { recursive: true });
+interface Query {
+  [x: string]: string;
+}
 
-  console.log(`video`, videoId, videoDir, file);
+const handler = async (req, res: NextApiResponse) => {
+
+
+  const file: File = req.file;
+  const { userId, videoName } = req.query as Query;
 
   // this api is for only uploading videos, the mimetype must start with video
   if (file.mimetype.split("/")[0] !== "video") {
@@ -44,12 +48,15 @@ const handler = async (req, res: NextApiResponse) => {
     return;
   }
 
-  Axios.post(
-    "http://localhost:3000/api/video/process",
-    {},
-    {
-      params: { videoId, fileIn: file.path, videoDir },
-    }
+  const { videoId } = await addVideo({ userId, videoName, access: "private" })
+
+  const videoDir = path.join(process.cwd(), `./storage/videos/${videoId}/`);
+  await fs.mkdir(videoDir, { recursive: true });
+
+  console.log(`video`, videoId, videoDir, file, userId);
+
+  await Axios.post(
+    `http://localhost:3000/api/video/process?videoId=${videoId}&fileIn=${file.path}&videoDir=${videoDir}`
   );
 
   res.status(200).json({ videoId });

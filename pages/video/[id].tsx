@@ -18,6 +18,7 @@ import { getSubscriber } from '../../Database/subscriber/get'
 import { getWatched } from '../../Database/history/get';
 import { addHistory } from '../../Database/history/add';
 import { getVideoAccess } from '../../Database/video/getAccess'
+import { getResolutions } from '../../Database/resolutions/get'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
@@ -33,6 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const video = await getVideo({ videoId })
+  const resolutions = await getResolutions({ videoId })
   const comments = await getComment({ videoId }) || []
   const vote = await getVote({ videoId })
   const videoUser = await getUser({ userId: video.userId })
@@ -42,11 +44,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   await addHistory({ videoId, userId });
 
   return {
-    props: { video, comments, vote, videoUser, subCount, subscribed, watched },
+    props: { video, comments, vote, videoUser, subCount, subscribed, watched, resolutions },
   }
 }
 
-export default function VideoPage({ video, comments, vote, videoUser, subCount, subscribed, watched, error }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function VideoPage({ video, comments, vote, videoUser, subCount, subscribed, watched, error, resolutions }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
   if (error) {
     <Container>
@@ -54,7 +56,7 @@ export default function VideoPage({ video, comments, vote, videoUser, subCount, 
     </Container>
   }
 
-  console.log({video, comments, vote, videoUser, subCount, subscribed, watched})
+  console.log({video, comments, vote, videoUser, subCount, subscribed, watched, resolutions})
 
   return (
     <Container>

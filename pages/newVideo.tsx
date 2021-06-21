@@ -40,7 +40,9 @@ export default function newVideoPage() {
 
     videoFileNameArray.pop();
 
-    setVideoName(videoFileNameArray.join(""));
+    const videoName = videoFileNameArray.join("")
+
+    setVideoName(videoName);
 
     // change the page over to uploading screen
     setIsUploading(true);
@@ -50,7 +52,8 @@ export default function newVideoPage() {
     formData.append("file", videoFile);
 
     // upload the video to the api
-    const { data } = await axios.post(`/video/upload?userId=${userId}`, formData, {
+    const { data } = await axios.post(`/video/upload?userId=${userId}&videoName=${videoName}`, formData, {
+
       // this content type needs to be defined to tell the api what the client is sending
       headers: {
         "Content-Type": "multipart/form-data",

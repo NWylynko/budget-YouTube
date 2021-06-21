@@ -6,6 +6,9 @@ import ffmpegStatic from "ffmpeg-static";
 import Fessonia from "@tedconf/fessonia";
 import fs from "fs/promises";
 
+import { addResolution } from "../../../Database/resolutions/add";
+import { updateResolution } from "../../../Database/resolutions/update";
+
 const ffmpeg = Fessonia({
   ffmpeg_bin: ffmpegStatic,
   ffprobe_bin: ffprobeStatic.path,
@@ -74,7 +77,7 @@ interface Query {
 const handler = async (req: NextApiRequest, res) => {
   const { videoId, fileIn, videoDir } = req.query as Query;
 
-  console.log(req.query);
+  console.log('process query', req.query);
 
   if (videoId && fileIn && videoDir) {
     // ffprobe is a tool that looks into videos to get a bunch of information
@@ -118,7 +121,17 @@ const handler = async (req: NextApiRequest, res) => {
     // at this point we have collected and generated all the data needed to process the video
 
     selectedVideoResolutions.map(({ width, height }) => {
-      [".webm", ".mp4"].map((fileType) => {
+      [".webm", ".mp4"].map(async (fileType) => {
+
+        // create a table to store each different resolution and file type for a video
+        const { resolutionId } = await addResolution({
+          videoId,
+          height: height.toString(),
+          width: width.toString(),
+          fileType,
+        });
+
+        // add the function to the pool to be processed
         videoPool.addTask(() =>
           resizeVideoToFile(
             videoId,
@@ -126,7 +139,8 @@ const handler = async (req: NextApiRequest, res) => {
             videoDir,
             fileType,
             width.toString(),
-            height.toString()
+            height.toString(),
+            resolutionId
           )
         );
       });
@@ -134,8 +148,7 @@ const handler = async (req: NextApiRequest, res) => {
 
     videoPool.start();
 
-    res.json({ done: "success" })
-
+    res.json({ done: "success" });
   }
 
   // this chunk of code starts a socket-io server to communicate with the
@@ -181,12 +194,15 @@ const resizeVideoToFile = async (
   videoDir: string,
   fileType: string,
   width: string,
-  height: string
+  height: string,
+  resolutionId: string
 ): Promise<void> => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     // from ingest we want to create a copy of the video in .webm and .mp4 in the
     // range of the resolutions we generated above
     // then the video can be deleted from ingest
+
+    await updateResolution({ resolutionId, status: "PROCESSING"})
 
     // this object has five classes, Fessonia is an object oriented package so everything is a class
     // FFmpegCommand is the starting point, FFmpegInput is used to add source files to the videoObject
@@ -221,28 +237,41 @@ const resizeVideoToFile = async (
 
     video.on("update", (data) => {
       console.log(videoId, `frame:`, data.frame);
-      clients[videoId]?.emit(
+      clients[videoId]?.emit(videoId, {
+        event: "update",
         videoId,
-        {event: "update", videoId, height, width, data}
-      );
+        height,
+        width,
+        data,
+      });
       // handle the update here
     });
 
-    video.on("success", (data) => {
-      clients[videoId]?.emit(
+    video.on("success", async (data) => {
+      clients[videoId]?.emit(videoId, {
+        event: "success",
         videoId,
-        {event: "success", videoId, height, width, data}
-      );
+        height,
+        width,
+        data,
+      });
+      await updateResolution({ resolutionId, status: "DONE"})
       resolve();
       // handle the success here
     });
 
     video.on("error", async (err) => {
-      console.error(err);
-      clients[videoId]?.emit(videoId, {event: "error", videoId, height, width, error: err});
-      reject(err.message);
-      await fs.rm(fileOut);
       // inspect and handle the error here
+      clients[videoId]?.emit(videoId, {
+        event: "error",
+        videoId,
+        height,
+        width,
+        error: err,
+      });
+      await updateResolution({ resolutionId, status: "ERROR"})
+      await fs.rm(fileOut);
+      reject(err.message);
     });
 
     // there is two methods to start this process, video.execute() and video.spawn()

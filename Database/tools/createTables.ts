@@ -71,8 +71,8 @@ export const createTables = async () => db.exec(SQL`
     "height"  TEXT NOT NULL,
     "fileType"  TEXT NOT NULL,
     "status"  TEXT NOT NULL,
-    FOREIGN KEY("videoId") REFERENCES "videos"("videoId")
-    PRIMARY KEY("videoId"),
-  )
+    FOREIGN KEY("videoId") REFERENCES "videos"("videoId"),
+    PRIMARY KEY("resolutionId")
+  );
 
 `);
