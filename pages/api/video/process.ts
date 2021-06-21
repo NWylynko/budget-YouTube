@@ -1,14 +1,69 @@
 import ffprobeStatic from "ffprobe-static";
-import ffmpegStatic from "ffmpeg-static";
-import Fessonia from "@tedconf/fessonia";
 import { Server, Socket } from "socket.io";
 import type { NextApiRequest, NextApiResponse } from "next";
 import ffprobe from "ffprobe";
+import ffmpegStatic from "ffmpeg-static";
+import Fessonia from "@tedconf/fessonia";
+import fs from "fs/promises";
 
-const fessonia = Fessonia({
+const ffmpeg = Fessonia({
   ffmpeg_bin: ffmpegStatic,
   ffprobe_bin: ffprobeStatic.path,
 });
+
+class Pool {
+  tasks: { fn: (...args: any) => Promise<any> }[];
+  activeTasks: any[];
+  finishedTasks: any[];
+  workers: number;
+  activeWorkers: number;
+  active: boolean;
+
+  constructor() {
+    this.tasks = [];
+    this.activeTasks = [];
+    this.finishedTasks = [];
+    this.workers = 1;
+    this.activeWorkers = this.activeTasks.length;
+    this.active = false;
+  }
+
+  addTask = (fn: any) => {
+    this.tasks.push({ fn });
+  };
+
+  start = () => {
+    this.active = true;
+    if (this.activeWorkers < this.workers) {
+      this.activeWorkers++;
+      const task = this.tasks.shift();
+
+      if (task) {
+        this.activeTasks.push(
+          new Promise((resolve, reject) => {
+            task
+              .fn()
+              .then(resolve)
+              .catch(reject)
+              .finally(() => {
+                this.finishedTasks.push(this.activeTasks.pop());
+                this.activeWorkers--;
+                if (this.active) {
+                  this.start();
+                }
+              });
+          })
+        );
+      }
+    }
+  };
+
+  stop = () => {
+    this.active = false;
+  };
+}
+
+const videoPool = new Pool();
 
 const clients: { [x: string]: Socket } = {};
 
@@ -17,11 +72,11 @@ interface Query {
 }
 
 const handler = async (req: NextApiRequest, res) => {
-  const { videoId, fileIn, videoDir, height, width } = req.query as Query;
+  const { videoId, fileIn, videoDir } = req.query as Query;
 
   console.log(req.query);
 
-  if (videoId && fileIn && videoDir && height && width) {
+  if (videoId && fileIn && videoDir) {
     // ffprobe is a tool that looks into videos to get a bunch of information
     // the tool returns an object called streams, it is a list
     // a video file contains both a video and an audio stream
@@ -58,72 +113,29 @@ const handler = async (req: NextApiRequest, res) => {
       ({ pixels }) => pixels <= masterVideoPixelCount
     );
 
+    console.log({ selectedVideoResolutions });
+
     // at this point we have collected and generated all the data needed to process the video
 
-    // from ingest we want to create a copy of the video in .webm and .mp4 in the
-    // range of the resolutions we generated above
-    // then the video can be deleted from ingest
-
-    // at the top of the file we created this fessonia object, we don't want to recreate the
-    // object on every request so you will have to go back up there to find out how we created it
-    // this object has five classes, fessonia is an object oriented package so everything is a class
-    // FFmpegCommand is the starting point, FFmpegInput is used to add source files to the videoObject
-    // FFmpeg is for defining where the output file goes and in what format, FilterNode is an object
-    // that applies a filter, in this case we will just use it to resize the video
-    // Filter chain is an array of filterNodes, it will apply the filters in the order defined
-    const {
-      FFmpegCommand,
-      FFmpegInput,
-      FFmpegOutput,
-      FilterNode,
-      FilterChain,
-    } = fessonia;
-
-    // create the new FFmpeg Object
-    const video = new FFmpegCommand();
-
-    // create a scale filter and add it to a chain
-    const scaleFilter = new FilterNode("scale", [width, height]);
-    const filterChain = new FilterChain([scaleFilter]);
-
-    // add the input file
-    video.addInput(new FFmpegInput(fileIn));
-
-    // apply the filter
-    video.addFilterChain(filterChain);
-    // define the output
-    video.addOutput(new FFmpegOutput(videoDir + `${height}.mp4`));
-
-    video.on("update", (data) => {
-      console.log(`frame:`, data);
-      clients[videoId]?.emit(videoId, `frame: ${data.frame}`);
-      // handle the update here
+    selectedVideoResolutions.map(({ width, height }) => {
+      [".webm", ".mp4"].map((fileType) => {
+        videoPool.addTask(() =>
+          resizeVideoToFile(
+            videoId,
+            fileIn,
+            videoDir,
+            fileType,
+            width.toString(),
+            height.toString()
+          )
+        );
+      });
     });
 
-    video.on("success", (data) => {
-      clients[videoId]?.emit(
-        videoId,
-        `Completed successfully with exit code ${data.exitCode}`
-      );
-      // handle the success here
-    });
+    videoPool.start();
 
-    video.on("error", (err) => {
-      clients[videoId]?.emit(videoId, err.message);
-      // inspect and handle the error here
-    });
+    res.json({ done: "success" })
 
-    // there is two methods to start this process, video.execute() and video.spawn()
-    // execute is a simpler method that returns a promise, but the on() listeners do not fire
-    // so here I am using spawn so the update listen is called to watch the progress
-    video.spawn();
-
-    // console.log({
-    //   aspectRatio,
-    //   allVideoResolutions,
-    //   masterVideoPixelCount,
-    //   selectedVideoResolutions,
-    // });
   }
 
   // this chunk of code starts a socket-io server to communicate with the
@@ -139,7 +151,6 @@ const handler = async (req: NextApiRequest, res) => {
 
     io.on("connection", (socket) => {
       socket.on("video", (videoId) => {
-
         // a clients object is global to this function, it uses the videoId
         // to point to a socket object, this is so when a video is being processed
         // above the update, start, and error can be communicated to the client
@@ -162,6 +173,90 @@ export const config = {
   api: {
     bodyParser: false,
   },
+};
+
+const resizeVideoToFile = async (
+  videoId: string,
+  fileIn: string,
+  videoDir: string,
+  fileType: string,
+  width: string,
+  height: string
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // from ingest we want to create a copy of the video in .webm and .mp4 in the
+    // range of the resolutions we generated above
+    // then the video can be deleted from ingest
+
+    // this object has five classes, Fessonia is an object oriented package so everything is a class
+    // FFmpegCommand is the starting point, FFmpegInput is used to add source files to the videoObject
+    // FFmpeg is for defining where the output file goes and in what format, FilterNode is an object
+    // that applies a filter, in this case we will just use it to resize the video
+    // Filter chain is an array of filterNodes, it will apply the filters in the order defined
+    const {
+      FFmpegCommand,
+      FFmpegInput,
+      FFmpegOutput,
+      FilterNode,
+      FilterChain,
+    } = ffmpeg;
+
+    // create the new FFmpeg Object
+    const video = new FFmpegCommand();
+
+    // create a scale filter and add it to a chain
+    const scaleFilter = new FilterNode("scale", [width, height]);
+    const filterChain = new FilterChain([scaleFilter]);
+
+    // add the input file
+    video.addInput(new FFmpegInput(fileIn));
+
+    // apply the filter
+    video.addFilterChain(filterChain);
+
+    const fileOut = videoDir + `${height}${fileType}`;
+
+    // define the output
+    video.addOutput(new FFmpegOutput(fileOut));
+
+    video.on("update", (data) => {
+      console.log(videoId, `frame:`, data.frame);
+      clients[videoId]?.emit(
+        videoId,
+        {event: "update", videoId, height, width, data}
+      );
+      // handle the update here
+    });
+
+    video.on("success", (data) => {
+      clients[videoId]?.emit(
+        videoId,
+        {event: "success", videoId, height, width, data}
+      );
+      resolve();
+      // handle the success here
+    });
+
+    video.on("error", async (err) => {
+      console.error(err);
+      clients[videoId]?.emit(videoId, {event: "error", videoId, height, width, error: err});
+      reject(err.message);
+      await fs.rm(fileOut);
+      // inspect and handle the error here
+    });
+
+    // there is two methods to start this process, video.execute() and video.spawn()
+    // execute is a simpler method that returns a promise, but the on() listeners do not fire
+    // so here I am using spawn so the update listen is called to watch the progress
+    video.spawn();
+
+    // console.log({
+    //   aspectRatio,
+    //   allVideoResolutions,
+    //   masterVideoPixelCount,
+    //   selectedVideoResolutions,
+    // });
+  });
 };
 
 const calcAspectRatio = (ratio: string) => {

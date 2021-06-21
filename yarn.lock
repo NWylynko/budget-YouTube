@@ -2178,6 +2178,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/workerpool@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@types/workerpool@npm:6.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: bccd303a379bbb78843abe49bb5997a7d189ddb3398e0717af9b4eee0fbc183eea83fc688659903850f144bbd12722487d7a2968721f815671f9b7fd79a090f2
+  languageName: node
+  linkType: hard
+
 "JSONStream@npm:^1.3.5":
   version: 1.3.5
   resolution: "JSONStream@npm:1.3.5"
@@ -2791,6 +2800,7 @@ __metadata:
     "@types/sqlite3": ^3.1.7
     "@types/styled-components": ^5.1.10
     "@types/uuid": ^8.3.0
+    "@types/workerpool": ^6.0.0
     axios: ^0.21.1
     babel-loader: ^8.2.2
     babel-plugin-styled-components: ^1.12.0
@@ -2824,6 +2834,7 @@ __metadata:
     swr: ^0.5.6
     typescript: ^4.3.4
     uuid: ^8.3.2
+    workerpool: ^6.1.5
   languageName: unknown
   linkType: soft
 
@@ -8261,6 +8272,13 @@ typescript@^4.3.4:
   dependencies:
     workbox-core: ^6.1.5
   checksum: 814b8d89346fa9285c9df3ec7f67ce7f45aed3cc265ccf29856614d1ccb5f026e76beb058fcbdbbd45e148e03d4d09f9f15b2f5df15f6bab0c28cd00b92e784a
+  languageName: node
+  linkType: hard
+
+"workerpool@npm:^6.1.5":
+  version: 6.1.5
+  resolution: "workerpool@npm:6.1.5"
+  checksum: aaf220c463d32c146887d28b45f0291e803c8c41d77a559ff525347f178b3b53b3b029a240bb92529a72771093f7cf5afdc81a28396ecc2f2f3179ad31d03456
   languageName: node
   linkType: hard
 

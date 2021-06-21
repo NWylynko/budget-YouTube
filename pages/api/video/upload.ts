@@ -48,7 +48,7 @@ const handler = async (req, res: NextApiResponse) => {
     "http://localhost:3000/api/video/process",
     {},
     {
-      params: { videoId, fileIn: file.path, videoDir, height: 360, width: 640 },
+      params: { videoId, fileIn: file.path, videoDir },
     }
   );
 
