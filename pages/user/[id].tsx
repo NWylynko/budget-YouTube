@@ -23,7 +23,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const { subscribers } = await getSubscriberCount({ userId: requestedUserId })
   const { subscribed } = await getSubscriber({ subscriber: userId, subscribee: requestedUserId })
-  const videos = await getUserAllVideo({ userId: requestedUserId })
+  const publicVideos = await getUserAllVideo({ userId: requestedUserId, access: "public" })
+
+  let unlistedVideos = []
+  let privateVideos = []
+
+  if (userId === requestedUser.userId) {
+    unlistedVideos = await getUserAllVideo({ userId: requestedUserId, access: "unlisted" })
+    privateVideos = await getUserAllVideo({ userId: requestedUserId, access: "private" })
+  }
+
+  const videos = [...publicVideos, ...unlistedVideos, ...privateVideos]
 
   return {
     props: { videos, requestedUser, subscribers, subscribed },
