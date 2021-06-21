@@ -1,13 +1,25 @@
-import styled from "styled-components"
-import Image from 'next/image'
-import Link from "next/link"
+import styled from "styled-components";
+import Image from "next/image";
+import Link from "next/link";
+import Cookies from "js-cookie";
+import { useApi } from "../../../ClientApi";
+import { BiVideoPlus } from "react-icons/bi";
 
-import { BiVideoPlus } from "react-icons/bi"
+export interface HeaderProps {}
 
-export interface HeaderProps {
+interface User {
+  email: string;
+  profilePicId: string;
+  userId: string;
+  userName: string;
 }
 
 export const Header = () => {
+  const userId = Cookies.get("userId");
+  const { data } = useApi<User>(`/user/get/${userId}`);
+
+  console.log(data);
+
   return (
     <StyledHeader>
       <div />
@@ -18,14 +30,26 @@ export const Header = () => {
         </LogoWithTextContainer>
       </Link>
       <Link href="/newVideo">
-        <div><BiVideoPlus size={36} color="#606060" /></div>
+        <div>
+          <BiVideoPlus size={36} color="#606060" />
+        </div>
       </Link>
-      <Link href={`/user/1`}>
-        <StyledProfilePic src="https://via.placeholder.com/48" height={48} width={48} />
-      </Link>
+      {userId && data ? (
+        <>
+          <Link href={`/user/${userId}`}>
+            <StyledProfilePic
+              src={`/api/image/get?imageId=${data.profilePicId}&height=48&width=48&format=webp`}
+              height={48}
+              width={48}
+            />
+          </Link>
+        </>
+      ) : (
+        <></>
+      )}
     </StyledHeader>
-  )
-}
+  );
+};
 
 const StyledHeader = styled.header`
   display: grid;
@@ -48,7 +72,7 @@ const LogoWithTextContainer = styled.div`
 
 const Title = styled.h1`
   margin: 0px;
-  font-family: 'Rock Salt', cursive;
+  font-family: "Rock Salt", cursive;
 `;
 
 const StyledProfilePic = styled.img`

@@ -1,14 +1,11 @@
 // code from
 // https://dev.to/abdisalan_js/how-to-code-a-video-streaming-server-using-nodejs-2o0
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Query } from "../Types"
 import fsPromises from "fs/promises";
 import fs from "fs";
 import path from "path";
 import mime from "mime-types";
-
-interface Query {
-  [x: string]: string;
-}
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const { videoId, height, fileType } = req.query as Query;

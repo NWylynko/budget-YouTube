@@ -3,6 +3,7 @@
     // https://stackoverflow.com/a/62547135
 import multer from "multer";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Query } from "../Types"
 import nextConnect from "next-connect";
 import path from "path";
 import fs from "fs/promises";
@@ -96,10 +97,6 @@ interface File {
   filename: string;
   path: string;
   size: number;
-}
-
-interface Query {
-  [x: string]: string;
 }
 
 const handler = async (req, res) => {
