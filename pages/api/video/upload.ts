@@ -26,7 +26,6 @@ const ffmpeg = Fessonia({
 class Pool {
   tasks: { fn: (...args: any) => Promise<any> }[];
   activeTasks: any[];
-  finishedTasks: any[];
   workers: number;
   activeWorkers: number;
   active: boolean;
@@ -34,7 +33,6 @@ class Pool {
   constructor() {
     this.tasks = [];
     this.activeTasks = [];
-    this.finishedTasks = [];
     this.workers = 1;
     this.activeWorkers = this.activeTasks.length;
     this.active = false;
@@ -47,10 +45,10 @@ class Pool {
   start = () => {
     this.active = true;
     if (this.activeWorkers < this.workers) {
-      this.activeWorkers++;
       const task = this.tasks.shift();
 
       if (task) {
+        this.activeWorkers++;
         this.activeTasks.push(
           new Promise((resolve, reject) => {
             task
@@ -58,7 +56,7 @@ class Pool {
               .then(resolve)
               .catch(reject)
               .finally(() => {
-                this.finishedTasks.push(this.activeTasks.pop());
+                this.activeTasks.pop();
                 this.activeWorkers--;
                 if (this.active) {
                   this.start();
