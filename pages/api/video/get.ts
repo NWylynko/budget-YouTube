@@ -44,7 +44,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       "Content-Range": `bytes ${start}-${end}/${videoSize}`,
       "Accept-Ranges": "bytes",
       "Content-Length": contentLength,
-      "Content-Type": mime.contentType(videoPath) || "application/octet-stream",
+      "Content-Type": mime.contentType(`video.${fileType}`) || "application/octet-stream",
     };
 
     res.writeHead(206, headers);
