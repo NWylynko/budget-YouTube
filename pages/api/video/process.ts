@@ -126,11 +126,24 @@ const handler = async (req: NextApiRequest, res) => {
     // });
   }
 
+  // this chunk of code starts a socket-io server to communicate with the
+  // client the current state of the video as it gets processed
+  // the code is from https://stackoverflow.com/a/62547135
+  // the general gist of things is that this code block is only ever
+  // run once, only when this handler is called for the first time
+  // the if statement checks if a socket-io server is running
+  // if not it creates a new one, then the .on() methods are defined
+  // lastly io server is set to the res so the server doesn't get created again
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server);
 
     io.on("connection", (socket) => {
       socket.on("video", (videoId) => {
+
+        // a clients object is global to this function, it uses the videoId
+        // to point to a socket object, this is so when a video is being processed
+        // above the update, start, and error can be communicated to the client
+
         clients[videoId] = socket;
       });
     });

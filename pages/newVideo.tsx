@@ -78,9 +78,23 @@ export default function newVideoPage() {
     multiple: false,
   });
 
+  // like the socket-io code in the process.ts file, this code chunk
+  // is from https://stackoverflow.com/a/62547135, I have added some
+  // checks in that if statement so the connection is only opened
+  // once the videoId and isUploading is true
   useEffect(() => {
     if (isUploading && videoId) {
+
+      // this is not your typical way of opening a socket-io connection
+      // first the client sends a request to /process, with no query
+      // the server doesn't take this as adding a new video to the processing pipeline
+      // it opens up a socket-io server if none is created (so this fetch is only useful
+      // the first time is called every time the server is started)
+
       fetch(`/api/video/process`).finally(() => {
+
+        // io() can take a url for the socket-io server but since it is running on the
+        // same hostname and port it knows where to find it
         const socket = io()
   
         socket.on('connect', () => {
