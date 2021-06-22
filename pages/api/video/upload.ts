@@ -344,11 +344,19 @@ const calcAspectRatio = (ratio: string) => {
   return parseInt(first) / parseInt(second);
 };
 
+// this function takes the path of a video and the id of the video in the database
+// it uses a module that uses ffmpeg to grab the first frame in the video
+// then by calling a function it uploads that image to storage and saves the
+// imageId to the video in the database
+// this thumbnail is used both for the cover of the video and to display
+// while the video loads
 const setFirstFrameToThumbnail = async (videoPath: string, videoId: string) => {
 
+  // create a tmp directory in /tmp 
   const tmpPath = await fs.mkdtemp('/tmp/')
   const tmpImage = tmpPath + '/thumbnail.png'
 
+  // this function saves the first frame in the video to the tmp image dir
   await extractFrames({
     input: videoPath,
     output: tmpImage,
@@ -359,10 +367,13 @@ const setFirstFrameToThumbnail = async (videoPath: string, videoId: string) => {
     ffmpegPath: ffmpegStatic
   })
 
+  // read the image from the file system
   const thumbnail = await fs.readFile(tmpImage);
 
+  // upload the image to storage and update the video details
   const { imageId } = await uploadImage(thumbnail, { type: "thumbnail", videoId, userId: null })
 
+  // remove the tmp dir
   await fs.rmdir(tmpPath)
 
   return { imageId }
