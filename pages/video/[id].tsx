@@ -109,7 +109,7 @@ export default function VideoPage({
           axios.post("/history/update", { videoId: video.videoId, userId, watched })
           console.log("timeupdate", watched);
         }}
-        poster={""}
+        poster={`/api/image/get?imageId=${video.thumbnailId}&height=720&width=1280&format=webp`}
         ref={videoPlayer}
       >
         <source

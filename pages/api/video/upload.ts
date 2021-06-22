@@ -12,10 +12,12 @@ import { Server, Socket } from "socket.io";
 import ffprobe from "ffprobe";
 import ffmpegStatic from "ffmpeg-static";
 import Fessonia from "@tedconf/fessonia";
+const extractFrames = require('ffmpeg-extract-frames')
 
 import { addVideo } from "../../../Database/video/add";
 import { addResolution } from "../../../Database/resolutions/add";
 import { updateResolution } from "../../../Database/resolutions/update";
+import { uploadImage } from "../image/upload"
 
 const clients: { [x: string]: Socket } = {};
 
@@ -162,6 +164,8 @@ const handler = async (req, res) => {
     console.log({ selectedVideoResolutions });
 
     // at this point we have collected and generated all the data needed to process the video
+
+    await setFirstFrameToThumbnail(fileIn, videoId)
 
     selectedVideoResolutions.map(({ width, height }) => {
       [".webm", ".mp4"].map(async (fileType) => {
@@ -339,3 +343,27 @@ const calcAspectRatio = (ratio: string) => {
   const [first, second] = ratio.split(":");
   return parseInt(first) / parseInt(second);
 };
+
+const setFirstFrameToThumbnail = async (videoPath: string, videoId: string) => {
+
+  const tmpPath = await fs.mkdtemp('/tmp/')
+  const tmpImage = tmpPath + '/thumbnail.png'
+
+  await extractFrames({
+    input: videoPath,
+    output: tmpImage,
+    offsets: [
+      1
+    ],
+    numFrames: 1,
+    ffmpegPath: ffmpegStatic
+  })
+
+  const thumbnail = await fs.readFile(tmpImage);
+
+  const { imageId } = await uploadImage(thumbnail, { type: "thumbnail", videoId, userId: null })
+
+  await fs.rmdir(tmpPath)
+
+  return { imageId }
+}

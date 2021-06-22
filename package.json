@@ -12,6 +12,7 @@
     "bootstrap": "5.0.1",
     "date-fns": "^2.22.1",
     "dotenv": "^10.0.0",
+    "ffmpeg-extract-frames": "^2.0.2",
     "ffmpeg-static": "^4.4.0",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.0.0",
