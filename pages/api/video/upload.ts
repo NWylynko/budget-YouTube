@@ -12,9 +12,10 @@ import { Server, Socket } from "socket.io";
 import ffprobe from "ffprobe";
 import ffmpegStatic from "ffmpeg-static";
 import Fessonia from "@tedconf/fessonia";
-const extractFrames = require('ffmpeg-extract-frames')
+import extractFrames from 'ffmpeg-extract-frames';
 
 import { addVideo } from "../../../Database/video/add";
+import { updateVideo } from "../../../Database/video/update";
 import { addResolution } from "../../../Database/resolutions/add";
 import { updateResolution } from "../../../Database/resolutions/update";
 import { uploadImage } from "../image/upload"
@@ -133,7 +134,7 @@ const handler = async (req, res) => {
     // in which case i will need to look at the properties of the stream to figure out what it is
     const { streams } = await ffprobe(fileIn, { path: ffprobeStatic.path });
     const [videoDetails, audioDetails] = streams;
-    // console.log(streams);
+    console.log(streams);
 
     // we need the aspect ratio of the video to generate different formats of the video
     // the format will generally be "16:9", this is great but we need this in a number
@@ -166,6 +167,13 @@ const handler = async (req, res) => {
     // at this point we have collected and generated all the data needed to process the video
 
     await setFirstFrameToThumbnail(fileIn, videoId)
+
+    if (videoDetails.duration) {
+      const duration = videoDetails.duration as unknown as string
+      const length = Math.floor(parseFloat(duration) * 1000)
+      await updateVideo({videoId, newVideo: { length }})
+
+    }
 
     selectedVideoResolutions.map(({ width, height }) => {
       [".webm", ".mp4"].map(async (fileType) => {
@@ -374,7 +382,7 @@ const setFirstFrameToThumbnail = async (videoPath: string, videoId: string) => {
   const { imageId } = await uploadImage(thumbnail, { type: "thumbnail", videoId, userId: null })
 
   // remove the tmp dir
-  await fs.rmdir(tmpPath)
+  await fs.rm(tmpPath, { recursive: true, force: true })
 
   return { imageId }
 }
