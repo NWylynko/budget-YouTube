@@ -136,6 +136,9 @@ const handler = async (req, res) => {
     const [videoDetails, audioDetails] = streams;
     console.log(streams);
 
+    const framesString = videoDetails.nb_frames as unknown as string
+    const frames = parseInt(framesString)
+
     // we need the aspect ratio of the video to generate different formats of the video
     // the format will generally be "16:9", this is great but we need this in a number
     // the computer can understand, so we divided 16 / 9 to get 1.7777, this can be times
@@ -162,6 +165,8 @@ const handler = async (req, res) => {
       ({ pixels }) => pixels <= masterVideoPixelCount
     );
 
+    const videoFormats = [".webm", ".mp4"]
+
     console.log({ selectedVideoResolutions });
 
     // at this point we have collected and generated all the data needed to process the video
@@ -172,11 +177,13 @@ const handler = async (req, res) => {
       const duration = videoDetails.duration as unknown as string
       const length = Math.floor(parseFloat(duration) * 1000)
       await updateVideo({videoId, newVideo: { length }})
-
     }
 
-    selectedVideoResolutions.map(({ width, height }) => {
-      [".webm", ".mp4"].map(async (fileType) => {
+    let numOfVideos = 0;
+    const totalNumOfVideos = selectedVideoResolutions.length * videoFormats.length 
+
+    selectedVideoResolutions.map(({ width, height }, index1) => {
+      videoFormats.map(async (fileType, index2) => {
         // create a table to store each different resolution and file type for a video
         const { resolutionId } = await addResolution({
           videoId,
@@ -184,6 +191,8 @@ const handler = async (req, res) => {
           width: width.toString(),
           fileType,
         });
+
+        const index = numOfVideos;
 
         // add the function to the pool to be processed
         videoPool.addTask(() =>
@@ -194,11 +203,16 @@ const handler = async (req, res) => {
             fileType,
             width.toString(),
             height.toString(),
-            resolutionId
+            resolutionId,
+            frames,
+            index,
+            totalNumOfVideos
           )
         );
 
         videoPool.start();
+
+        numOfVideos++;
 
       });
     });
@@ -254,7 +268,10 @@ const resizeVideoToFile = async (
   fileType: string,
   width: string,
   height: string,
-  resolutionId: string
+  resolutionId: string,
+  frames: number,
+  index: number,
+  totalNumOfVideos: number
 ): Promise<void> => {
   return new Promise(async (resolve, reject) => {
     // from ingest we want to create a copy of the video in .webm and .mp4 in the
@@ -296,12 +313,18 @@ const resizeVideoToFile = async (
 
     video.on("update", (data) => {
       console.log(videoId, `frame:`, data.frame);
+      const percentage = Math.floor((data.frame / frames) * 100)
       clients[videoId]?.emit(videoId, {
         event: "update",
         videoId,
         height,
         width,
         data,
+        frames,
+        percentage,
+        index,
+        totalNumOfVideos,
+        totalPercentage: Math.floor(((index + 1) / totalNumOfVideos) * 100)
       });
       // handle the update here
     });

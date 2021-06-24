@@ -18,15 +18,16 @@ export default function newVideoPage() {
 
   const [videoName, setVideoName] = useState("");
   const [description, setDescription] = useState("");
-  const [access, setAccess] = useState("");
+  const [access, setAccess] = useState("private");
 
   const [connectedToProgress, setConnectedToProgress] = useState(false);
+  const [processProgress, setProcessProgress] = useState(0);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const data = { videoName, description, access };
-    console.log(data);
-    console.log(e.target.value);
+
+    await axios.post("/video/update", { videoId, data})
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -102,7 +103,12 @@ export default function newVideoPage() {
 
       socket.on(videoId, (data) => {
         // log the update to console for now
-        console.log(videoId, data);
+        // console.log(videoId, data);
+        if (data.index) {
+          setProcessProgress(data.totalPercentage)
+          console.log(`${data.index}:${data.totalPercentage}`)
+        }
+
       });
 
       socket.on("disconnect", () => {
@@ -134,7 +140,8 @@ export default function newVideoPage() {
   return (
     <>
       <h2>{videoName}</h2>
-      <ProgressBar animated now={uploadProgress} />
+      {connectedToProgress ? <span>Processing...</span> : <span>Uploading...</span>}
+      <ProgressBar animated now={connectedToProgress ? processProgress : uploadProgress} />
       <ContainerForm onSubmit={onSubmit}>
         <h3>Details</h3>
         <Label>Title</Label>
