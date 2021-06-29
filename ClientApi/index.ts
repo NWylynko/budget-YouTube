@@ -5,7 +5,7 @@ import useSWR from 'swr'
 export const axios = Axios.create({
   // baseURL: 'http://localhost:3000/api/',
   baseURL: '/api/',
-  timeout: 1000,
+  timeout: 5000,
 });
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data)

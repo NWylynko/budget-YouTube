@@ -11,7 +11,7 @@ export const removeSubscriber = async ({ subscribee, subscriber }: removeSubscri
 
   await db.run(SQL`
     
-    DELETE FROM "subscriber"
+    DELETE FROM "subscribers"
     WHERE "subscribee" = ${subscribee}
     AND "subscriber" = ${subscriber}
 

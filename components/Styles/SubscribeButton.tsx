@@ -1,7 +1,12 @@
 import styled from "styled-components";
 import { Button } from "./Button"
 
-export const SubscribeButton = styled(Button)`
-  background-color: ${props => props.theme.colors.darkBrand};
-  color: white;
+interface SubscibeButtonProps {
+  isSubscribed?: boolean;
+}
+
+export const SubscribeButton = styled(Button)<SubscibeButtonProps>`
+  background-color: ${({theme, isSubscribed}) => isSubscribed ? theme.colors.darkGrey : theme.colors.darkBrand};
+  color: ${({theme, isSubscribed}) => isSubscribed ? theme.colors.greyButtons : "white"};
+  
 `;

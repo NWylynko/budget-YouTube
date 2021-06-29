@@ -1,4 +1,9 @@
 import styled from "styled-components";
+import { useState } from "react"
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+
+import { axios } from "../../ClientApi"
+
 import { GridOfVideos } from "../../components/GridOfVideos";
 import { SubscribeButton } from "../../components/Styles/SubscribeButton"
 
@@ -6,7 +11,6 @@ import { getUserAllVideo } from '../../Database/video/getUserAll'
 import { getUser } from '../../Database/user/get'
 import { getSubscriberCount } from '../../Database/subscriber/getCount'
 import { getSubscriber } from '../../Database/subscriber/get'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
@@ -36,11 +40,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const videos = [...publicVideos, ...unlistedVideos, ...privateVideos]
 
   return {
-    props: { videos, requestedUser, subscribers, subscribed },
+    props: { videos, requestedUser, subscribers, subscribed, userId },
   }
 }
 
-export default function UserPage({ videos, requestedUser, subscribers, subscribed }: InferGetServerSidePropsType<typeof getServerSideProps>) {  
+export default function UserPage({ videos, requestedUser, subscribers, subscribed, userId }: InferGetServerSidePropsType<typeof getServerSideProps>) {  
+  
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(subscribed || false)
+
+  const onSubscribe = async () => {
+    if (!isSubscribed) {
+      setIsSubscribed(true)
+      await axios.post("/subscriber/add", { subscribee: requestedUser.userId, subscriber: userId })
+    } else {
+      setIsSubscribed(false)
+      await axios.post("/subscriber/remove", { subscribee: requestedUser.userId, subscriber: userId })
+    }
+  }
+  
   return (
     <Container>
       <UserBar>
@@ -52,7 +69,7 @@ export default function UserPage({ videos, requestedUser, subscribers, subscribe
           <SubscriberCount>{subscribers} subscribers</SubscriberCount>
         </div>
         <div>
-          <SubscribeButton>Subscribe</SubscribeButton>
+          <SubscribeButton onClick={onSubscribe} isSubscribed={isSubscribed}>Subscribe</SubscribeButton>
         </div>
       </UserBar>
       <GridOfVideos videos={videos} />

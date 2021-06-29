@@ -7,6 +7,7 @@ interface newSubscriber {
 }
 
 // subscribers a user to another user
+// the subscribee is the user getting a subscriber ( there subsciber count goes up )
 export const addSubscriber = async ({ subscribee, subscriber }: newSubscriber) => {
 
   if (subscribee === subscriber) {

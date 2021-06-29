@@ -81,6 +81,7 @@ export default function VideoPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [height, setHeight] = useState("720");
   const videoPlayer = useRef(null);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(subscribed || false)
 
   useEffect(() => {
     if (videoPlayer.current) {
@@ -97,6 +98,16 @@ export default function VideoPage({
   }
 
   console.log({video, comments, vote, videoUser, subCount, subscribed, watched, resolutions, userId})
+
+  const onSubscribe = async () => {
+    if (!isSubscribed) {
+      setIsSubscribed(true)
+      await axios.post("/subscriber/add", { subscribee: videoUser.userId, subscriber: userId })
+    } else {
+      setIsSubscribed(false)
+      await axios.post("/subscriber/remove", { subscribee: videoUser.userId, subscriber: userId })
+    }
+  }
 
   return (
     <Container>
@@ -152,7 +163,7 @@ export default function VideoPage({
           <SubscriberCount>{subCount.subscribers} subscribers</SubscriberCount>
           <VideoDescription>{video.description}</VideoDescription>
         </CreatorSubInfo>
-        <SubscribeButton>Subscribe</SubscribeButton>
+        <SubscribeButton onClick={onSubscribe} isSubscribed={isSubscribed}>Subscribe</SubscribeButton>
       </CreatorInfo>
       <Comments comments={comments} />
     </Container>
