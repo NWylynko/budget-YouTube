@@ -7,7 +7,7 @@ import fs from "fs";
 import path from "path";
 import mime from "mime-types";
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
+export default async function getVideoHandler(req: NextApiRequest, res: NextApiResponse) {
   const { videoId, height, fileType } = req.query as Query;
 
   if (!videoId || !height || !fileType) {

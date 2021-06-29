@@ -5,7 +5,7 @@ interface Body {
   [x: string]: string;
 }
 
-export default async function(req: NextApiRequest, res: NextApiResponse) {
+export default async function removeSubscriberHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const { subscribee, subscriber } = req.body as Body;
 

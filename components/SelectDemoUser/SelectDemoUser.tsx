@@ -29,7 +29,7 @@ export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
             onClick(user.userId);
           }} >
             <div>
-              <Image src={`/api/image/get?imageId=${user.profilePicId}&height=64&width=64&format=webp`} height={64} width={64} />
+              <Image alt="user profile pic" src={`/api/image/get?imageId=${user.profilePicId}&height=64&width=64&format=webp`} height={64} width={64} />
             </div>
             <Details>
               <h4>{user.userName}</h4>

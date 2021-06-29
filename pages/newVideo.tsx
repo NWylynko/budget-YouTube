@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import io from "socket.io-client";
 import { useEffect } from "react";
 
-export default function newVideoPage() {
+export default function NewVideoPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -78,7 +78,7 @@ export default function newVideoPage() {
     );
 
     setVideoId(data.videoId);
-  }, []);
+  }, [userId]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -5,7 +5,7 @@ interface Body {
   [x: string]: any;
 }
 
-export default async function(req: NextApiRequest, res: NextApiResponse) {
+export default async function updateHistoryHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const { videoId, userId, watched } = req.body as Body;
 

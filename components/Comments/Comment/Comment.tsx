@@ -29,7 +29,7 @@ export const Comment = ({
       </ProfilePicContainer>
       <SubContainer>
         <Horizontal>
-          <Link href={`/user/${userId}`}>
+          <Link href={`/user/${userId}`} passHref>
             <UserName>{userName}</UserName>
           </Link>
           <TimeStamp>{formatDistanceToNow(timestamp)}</TimeStamp>

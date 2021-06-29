@@ -25,7 +25,7 @@ interface Query {
 // well it allows the client side to request whatever resolution it wants.
 // while we could generate different resolutions when an image is uploaded
 // but this requires the upload function to predict what resolutions will be needed in the future
-export default async function(req: NextApiRequest, res: NextApiResponse) {
+export default async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const { imageId, height, width, format } = req.query as Query
 

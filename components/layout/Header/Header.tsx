@@ -23,21 +23,22 @@ export const Header = () => {
   return (
     <StyledHeader>
       <div />
-      <Link href="/">
+      <Link href="/" passHref>
         <LogoWithTextContainer>
-          <Image src="/logo.png" height={50} width={70} />
+          <Image src="/logo.png" height={50} width={70} alt="budget youtube logo" />
           <Title>Budget YouTube</Title>
         </LogoWithTextContainer>
       </Link>
-      <Link href="/newVideo">
+      <Link href="/newVideo" passHref>
         <div>
           <BiVideoPlus size={36} color="#606060" />
         </div>
       </Link>
       {userId && data ? (
         <>
-          <Link href={`/user/${userId}`}>
+          <Link href={`/user/${userId}`} passHref>
             <StyledProfilePic
+            alt="profile pic"
               src={`/api/image/get?imageId=${data.profilePicId}&height=48&width=48&format=webp`}
               height={48}
               width={48}

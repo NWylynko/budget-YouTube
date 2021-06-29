@@ -18,7 +18,7 @@ interface VideoitemProps {
 export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, profilePicId, userName, views }: VideoitemProps) => {
 
   return (
-    <Link href={`/video/${videoId}`}>
+    <Link href={`/video/${videoId}`} passHref>
       <Container>
         <Thumbnail {...{ length, thumbnailId }} />
         <Details {...{ videoName, timestamp, profilePicId, userName, views }} />

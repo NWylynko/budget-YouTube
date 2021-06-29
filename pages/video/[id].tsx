@@ -87,7 +87,7 @@ export default function VideoPage({
     if (videoPlayer.current) {
       videoPlayer.current.currentTime = watched
     }
-  }, [videoPlayer.current])
+  }, [watched])
 
   if (error) {
     return (
@@ -157,7 +157,7 @@ export default function VideoPage({
           />
         </ProfilePicContainer>
         <CreatorSubInfo>
-          <Link href={`/user/${videoUser.userId}`}>
+          <Link href={`/user/${videoUser.userId}`} passHref>
             <UserNameTitle>{videoUser.userName}</UserNameTitle>
           </Link>
           <SubscriberCount>{subCount.subscribers} subscribers</SubscriberCount>
