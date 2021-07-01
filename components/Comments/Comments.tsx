@@ -10,11 +10,17 @@ interface Comment {
   userName: string;
 }
 
-export const Comments = ({ comments }: { comments: Comment[] }) => {
+interface CommentsProps {
+  comments: Comment[];
+  userId: string;
+  videoId: string;
+}
+
+export const Comments = ({ comments, userId, videoId }: CommentsProps) => {
   return (
     <>
       <h2>Comments</h2>
-      <AddComment />
+      <AddComment {...{userId, videoId}} />
       {comments.map((comment) => (
         <Comment key={comment.commentId} {...comment} />
       ))}

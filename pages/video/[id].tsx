@@ -165,7 +165,7 @@ export default function VideoPage({
         </CreatorSubInfo>
         <SubscribeButton onClick={onSubscribe} isSubscribed={isSubscribed}>Subscribe</SubscribeButton>
       </CreatorInfo>
-      <Comments comments={comments} />
+      <Comments comments={comments} userId={userId} videoId={video.videoId} />
     </Container>
   );
 }

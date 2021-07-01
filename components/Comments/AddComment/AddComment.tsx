@@ -1,9 +1,19 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "../../Styles/Button";
+import { axios } from "../../../ClientApi"
 
-export const AddComment = () => {
+interface AddCommentProps {
+  userId: string;
+  videoId: string;
+}
+
+export const AddComment = ({ userId, videoId}: AddCommentProps) => {
   const [comment, setComment] = useState("");
+
+  const addComment = async () => {
+    await axios.post("/comment/add", { userId, videoId, comment })
+  }
 
   return (
     <Container>
@@ -15,7 +25,7 @@ export const AddComment = () => {
         onChange={(e) => setComment(e.target.value)}
         placeholder="Add a comment..."
       />
-      <CommentButton disabled={comment.length === 0}>Comment</CommentButton>
+      <CommentButton onClick={addComment} disabled={comment.length === 0}>Comment</CommentButton>
     </Container>
   );
 };
