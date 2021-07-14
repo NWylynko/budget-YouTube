@@ -16,6 +16,7 @@ import { SubscribeButton } from "../../components/Styles/SubscribeButton";
 
 import { getVideo } from "../../Database/video/get";
 import { getComment } from "../../Database/comment/get";
+import { getVoteCount } from "../../Database/vote/getCount";
 import { getVote } from "../../Database/vote/get";
 import { getUser } from "../../Database/user/get";
 import { getSubscriberCount } from "../../Database/subscriber/getCount";
@@ -25,7 +26,7 @@ import { addHistory } from "../../Database/history/add";
 import { getVideoAccess } from "../../Database/video/getAccess";
 import { getResolutions } from "../../Database/resolutions/get";
 
-import { axios } from "../../ClientApi"
+import { axios, useApi, mutate } from "../../ClientApi"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const videoId = context.params.id as string;
@@ -42,7 +43,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const video = await getVideo({ videoId });
   const resolutions = await getResolutions({ videoId });
   const comments = (await getComment({ videoId })) || [];
-  const vote = await getVote({ videoId });
+  const votes = await getVoteCount({ videoId });
+  const vote = await getVote({ videoId, userId })
   const videoUser = await getUser({ userId: video.userId });
   const subCount = await getSubscriberCount({ userId: video.userId });
   const { subscribed } = await getSubscriber({
@@ -56,6 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       video,
       comments,
+      votes,
       vote,
       videoUser,
       subCount,
@@ -67,37 +70,35 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default function VideoPage({
-  video,
-  comments,
-  vote,
-  videoUser,
-  subCount,
-  subscribed,
-  watched,
-  error,
-  resolutions,
-  userId
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function VideoPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [height, setHeight] = useState("720");
   const videoPlayer = useRef(null);
-  const [isSubscribed, setIsSubscribed] = useState<boolean>(subscribed || false)
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(props.subscribed || false)
 
   useEffect(() => {
     if (videoPlayer.current) {
       videoPlayer.current.currentTime = watched
     }
-  }, [watched])
+  }, [props.watched])
 
-  if (error) {
+  const { video, comments, videoUser, subCount, subscribed, watched, resolutions, userId } = props
+  const { videoId } = video
+
+  console.log(props)
+
+  const { data: vote } = useApi("/vote/get", { videoId, userId }, props.vote)
+  const { data: votes } = useApi("/vote/getCount", { videoId }, props.votes)
+
+  console.log('vote', vote)
+  console.log('votes', votes)
+
+  if (props.error) {
     return (
       <Container>
-        <span>{error}</span>
+        <span>{props.error}</span>
       </Container>
     );
   }
-
-  console.log({video, comments, vote, videoUser, subCount, subscribed, watched, resolutions, userId})
 
   const onSubscribe = async () => {
     if (!isSubscribed) {
@@ -138,13 +139,41 @@ export default function VideoPage({
           {video.views} views • {format(video.timestamp, "PPP")}
         </StatsInfo>
         <LikeContainer>
-          <LikeSubContainer>
-            <AiOutlineLike size={28} />
-            <span>{vote.likes}</span>
+          <LikeSubContainer onClick={async () => {
+
+            if (vote.vote === null) {
+              await axios.post("/vote/add", { userId, videoId: video.videoId, type: 'like' })
+              mutate("/vote/get", { vote: 'like' }, true)
+            } else if (vote.vote === 'like') {
+              await axios.post("/vote/remove", { userId, videoId: video.videoId, type: 'like' })
+              mutate("/vote/get", { vote: null }, true)
+            } else {
+              await axios.post("/vote/update", { userId, videoId: video.videoId, type: 'like' })
+              mutate("/vote/get", { vote: 'like' }, true)
+            }
+
+            mutate("/vote/getCount")
+          }}>
+            {vote.vote === 'like' ? <AiFillLike size={28} /> : <AiOutlineLike size={28} />}
+            <span>{votes.likes}</span>
           </LikeSubContainer>
-          <LikeSubContainer>
-            <AiOutlineDislike size={28} />
-            <span>{vote.dislikes}</span>
+          <LikeSubContainer onClick={async () => {
+
+            if (vote.vote === null) {
+              await axios.post("/vote/add", { userId, videoId: video.videoId, type: 'dislike' })
+              mutate("/vote/get", { vote: 'dislike' }, true)
+            } else if (vote.vote === 'dislike') {
+              await axios.post("/vote/remove", { userId, videoId: video.videoId, type: 'dislike' })
+              mutate("/vote/get", { vote: null }, true)
+            } else {
+              await axios.post("/vote/update", { userId, videoId: video.videoId, type: 'dislike' })
+              mutate("/vote/get", { vote: 'dislike' }, true)
+            }
+
+            mutate("/vote/getCount")
+          }}>
+            {vote.vote === 'dislike' ? <AiFillDislike size={28} /> : <AiOutlineDislike size={28} />}
+            <span>{votes.dislikes}</span>
           </LikeSubContainer>
         </LikeContainer>
       </StatsBar>
