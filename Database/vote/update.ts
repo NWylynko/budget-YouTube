@@ -14,12 +14,12 @@ export const updateVote = async ({ videoId, userId, type }: Vote) => {
   
     UPDATE "votes"
     SET
-      "type" = ${type},
+      "type" = ${type}
     WHERE "videoId" = ${videoId}
     AND "userId" = ${userId}
 
   `);
 
-  return { videoId, userId, type }
+  return { type }
 
 }

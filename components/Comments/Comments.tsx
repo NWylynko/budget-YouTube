@@ -18,7 +18,7 @@ interface CommentsProps {
 }
 
 export const Comments = ({ comments, userId, videoId }: CommentsProps) => {
-  const { data, mutate } = useApi<Comment[]>(`/comment/get/${videoId}`, { initialData: comments });
+  const { data, mutate } = useApi<Comment[]>(`/comment/get/${videoId}`, {}, comments);
 
   const addComment = async (comment: string) => {
     await axios.post("/comment/add", { userId, videoId, comment })

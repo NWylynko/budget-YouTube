@@ -1,23 +1,20 @@
 import db from "../db";
 import SQL from 'sql-template-strings';
 
-// gets a count of all the likes and dislikes a video has
-export const getVote = async ({ videoId }: { videoId: string }) => {
+// gets if a user has liked, disliked or neither a video
+export const getVote = async ({ videoId, userId }: { videoId: string, userId: string }): Promise<{ vote: "like" | "dislike" | null}> => {
 
-  const { likes } = await db.get(SQL`
-    SELECT count(type) as likes 
+  const data: any = await db.get(SQL`
+    SELECT type 
     FROM votes 
     WHERE videoId = ${videoId}
-    AND type = "like"
+    AND userId = ${userId}
   `);
 
-  const { dislikes } = await db.get(SQL`
-    SELECT count(type) as dislikes 
-    FROM votes 
-    WHERE videoId = ${videoId}
-    AND type = "dislike"
-  `);
+  if (!data) {
+    return { vote: null }
+  }
 
-  return { likes, dislikes }
+  return { vote: data.type }
 
 }
