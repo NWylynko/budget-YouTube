@@ -26,5 +26,7 @@ export const getComment = async ({ videoId }: { videoId: string }): Promise<Comm
     "videoId" = ${videoId}
   AND
     "comments"."userId" = "users"."userId";
+  ORDER BY
+    "comments"."timestamp" ASC
 
 `);

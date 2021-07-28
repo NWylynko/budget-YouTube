@@ -25,7 +25,8 @@ import { addHistory } from "../../Database/history/add";
 import { getVideoAccess } from "../../Database/video/getAccess";
 import { getResolutions } from "../../Database/resolutions/get";
 
-import { axios } from "../../ClientApi"
+import { axios, useApi } from "../../ClientApi"
+import { User } from "../../Types/User"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const videoId = context.params.id as string;
@@ -44,6 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const comments = (await getComment({ videoId })) || [];
   const vote = await getVote({ videoId });
   const videoUser = await getUser({ userId: video.userId });
+  const _user = await getUser({ userId })
   const subCount = await getSubscriberCount({ userId: video.userId });
   const { subscribed } = await getSubscriber({
     subscriber: userId,
@@ -62,7 +64,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       subscribed,
       watched,
       resolutions,
-      userId
+      userId,
+      _user
     },
   };
 };
@@ -77,11 +80,20 @@ export default function VideoPage({
   watched,
   error,
   resolutions,
-  userId
+  userId,
+  _user
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [height, setHeight] = useState("720");
   const videoPlayer = useRef(null);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(subscribed || false)
+
+  // using swr effectively like a key-pair global state
+  // by setting initialData from server side data
+  // no loading state is needed
+  // this allows components to be able to access data
+  // without using a context or prop drilling
+  // with the added feature of easy re-fetching
+  const { data: user } = useApi<User>(`/user/get/${userId}`, { initialData: _user });
 
   useEffect(() => {
     if (videoPlayer.current) {

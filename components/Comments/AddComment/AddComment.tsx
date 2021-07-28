@@ -1,24 +1,26 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "../../Styles/Button";
-import { axios } from "../../../ClientApi"
+import { useApi, axios } from "../../../ClientApi"
+import { User } from "../../../Types/User"
 
 interface AddCommentProps {
   userId: string;
-  videoId: string;
+  onNewComment: (comment: string) => void;
 }
 
-export const AddComment = ({ userId, videoId}: AddCommentProps) => {
+export const AddComment = ({ userId, onNewComment }: AddCommentProps) => {
   const [comment, setComment] = useState("");
+  const { data: user } = useApi<User>(`/user/get/${userId}`);
 
-  const addComment = async () => {
-    await axios.post("/comment/add", { userId, videoId, comment })
-  }
+  console.log(`user`, user)
+
+  const addComment = () => onNewComment(comment);
 
   return (
     <Container>
       <ImageContainer>
-        <StyledImage src="https://via.placeholder.com/40" height={40} width={40} />
+        {/* <StyledImage src={`/api/image/get?imageId=${data.profilePicId}&height=40&width=40&format=webp`} height={40} width={40} /> */}
       </ImageContainer>
       <StyledInput
         value={comment}

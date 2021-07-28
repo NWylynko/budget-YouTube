@@ -4,15 +4,9 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import { useApi } from "../../../ClientApi";
 import { BiVideoPlus } from "react-icons/bi";
+import { User } from "../../../Types/User"
 
 export interface HeaderProps {}
-
-interface User {
-  email: string;
-  profilePicId: string;
-  userId: string;
-  userName: string;
-}
 
 export const Header = () => {
   const userId = Cookies.get("userId");
