@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { useApi } from "../../../ClientApi";
-import { BiVideoPlus } from "react-icons/bi";
+import { BiVideoPlus, BiSearch } from "react-icons/bi";
 import { User } from "../../../Types/User"
 
 export interface HeaderProps {}
@@ -22,6 +22,11 @@ export const Header = () => {
           <Image src="/logo.png" height={50} width={70} alt="budget youtube logo" />
           <Title>Budget YouTube</Title>
         </LogoWithTextContainer>
+      </Link>
+      <Link href="/search" passHref>
+        <div>
+          <BiSearch size={36} color="#606060" />
+        </div>
       </Link>
       <Link href="/newVideo" passHref>
         <div>
@@ -48,7 +53,7 @@ export const Header = () => {
 
 const StyledHeader = styled.header`
   display: grid;
-  grid-template-columns: calc(48px * 2) auto 48px 48px;
+  grid-template-columns: calc(48px * 3) auto 48px 48px 48px;
   /* flex-direction: row; */
   max-height: 75px;
   /* justify-content: center; */
