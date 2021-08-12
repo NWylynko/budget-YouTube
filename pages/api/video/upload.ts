@@ -143,16 +143,28 @@ const handler = async (req, res) => {
     // the format will generally be "16:9", this is great but we need this in a number
     // the computer can understand, so we divided 16 / 9 to get 1.7777, this can be times
     // by the height of the video we want to maintain aspect ratio
-    const aspectRatio = calcAspectRatio(videoDetails.display_aspect_ratio);
+    const aspectRatio = calcAspectRatio(videoDetails.display_aspect_ratio || `${videoDetails.width}:${videoDetails.height}`);
+
+    const isVerticalVideo = videoDetails.tags.rotate === "90"
 
     // for now we will only use resolutions of 1080p and down, while 4K is fun and all
     // the time taken to export a video in those higher resolutions can be harsh
     // in the future to add support for those higher resolutions all that needs to
     // happens is add in the height of the resolution
     const allVideoResolutions = [144, 240, 360, 480, 720, 1080].map(
-      (height) => {
-        const width = Math.floor(aspectRatio * height);
-        const pixels = width * height;
+      (standardRes) => {
+        let width: number;
+        let height: number;
+
+        if (isVerticalVideo) {
+          width = standardRes
+          height = Math.floor(aspectRatio * standardRes);
+        } else {
+          width = Math.floor(aspectRatio * standardRes);
+          height = standardRes
+        }
+
+        const pixels = width * standardRes;
         return { width, height, pixels };
       }
     );
