@@ -74,7 +74,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function VideoPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [height, setHeight] = useState("720");
+  const { video, comments, videoUser, subCount, subscribed, watched, resolutions, userId } = props
+  const { videoId } = video
+
+  const resolutionOptions = resolutions
+    .filter(({fileType}) => fileType === ".webm") // could be either .webm or .mp4, just want only one of the file types
+    .filter(({status}) => status === "DONE") // only can display resolutions that have been rendered
+    .map(({height, resolutionId}) => ({height, resolutionId})) // strip objects down to just height and id
+    .sort(({height: height1}, {height: height2}) => parseInt(height1) - parseInt(height2)) // sort the list from least to most
+
+  const [height, setHeight] = useState(resolutionOptions[resolutionOptions.length - 1].height);
   const videoPlayer = useRef(null);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(props.subscribed || false)
 
@@ -90,10 +99,7 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
     if (videoPlayer.current) {
       videoPlayer.current.currentTime = watched
     }
-  }, [props.watched])
-
-  const { video, comments, videoUser, subCount, subscribed, watched, resolutions, userId } = props
-  const { videoId } = video
+  }, [watched])
 
   console.log(props)
 
@@ -144,7 +150,14 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
           type="video/mp4"
         />
       </video>
-      <Title>{video.videoName}</Title>
+      <TitleBar>
+        <Title>{video.videoName} {height}</Title>
+        <select value={height} onChange={(e) => setHeight(e.target.value)}>
+          {resolutionOptions.map(({ height, resolutionId }) => (
+            <option value={height} key={resolutionId}>{height}p</option>
+          ))}
+        </select>
+      </TitleBar>
       <StatsBar>
         <StatsInfo>
           {video.views} views • {format(video.timestamp, "PPP")}
@@ -218,6 +231,13 @@ const Container = styled.div`
 const Title = styled.h2`
   margin: 6px;
   margin-top: 16px;
+`;
+
+const TitleBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 3px;
 `;
 
 const StatsBar = styled.div`
