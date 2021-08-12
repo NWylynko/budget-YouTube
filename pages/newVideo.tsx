@@ -115,7 +115,12 @@ export default function NewVideoPage() {
         console.log("disconnect");
         setConnectedToProgress(false);
       });
+      
+      return () => {
+        socket.disconnect();
+      }
     }
+    
   }, [isUploading, videoId]); // Added [] as useEffect filter so it will be executed only once, when component is mounted
 
   if (!isUploading) {
