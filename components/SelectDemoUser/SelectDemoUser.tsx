@@ -17,7 +17,8 @@ export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
   const { data: users } = useApi<User[]>("/user/getAll");
 
   const onResetDatabase = async () => {
-    console.log(await axios.get('/database/reset'))
+    console.log(await axios.post('/database/reset'));
+    location.reload();
   }
 
   return (

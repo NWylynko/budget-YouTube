@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
+import axios from "axios";
 
 import { addUser } from "../user/add"
 import { addVideo } from "../video/add"
@@ -22,6 +23,12 @@ export const addTestData = async () => {
   const user3 = await addUser({ userName: 'jack', email: 'jack@gmail.com', profilePicId })
   const user4 = await addUser({ userName: 'cameron', email: 'cameron@google.com', profilePicId })
   const user5 = await addUser({ userName: 'henry', email: 'henry@henry.com', profilePicId })
+
+  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user1.userName}.svg`), { type: "user", userId: user1.userId, videoId: null })
+  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user2.userName}.svg`), { type: "user", userId: user2.userId, videoId: null })
+  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user3.userName}.svg`), { type: "user", userId: user3.userId, videoId: null })
+  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user4.userName}.svg`), { type: "user", userId: user4.userId, videoId: null })
+  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user5.userName}.svg`), { type: "user", userId: user5.userId, videoId: null })
 
   const video1 = await addVideo({ userId: user1.userId, videoName: 'my first video', access: "public" })
   const video2 = await addVideo({ userId: user1.userId, videoName: 'vlog day two', access: "public" })
@@ -64,4 +71,9 @@ const openImage = async (path: string): Promise<Buffer> => {
   const imagePath = join(process.cwd(), path)
   const imageBuffer = await readFile(imagePath)
   return imageBuffer
+}
+
+const openWebImage = async (url: string): Promise<Buffer> => {
+  const response = await axios.get(url, { responseType: 'arraybuffer' })
+  return response.data
 }

@@ -7,15 +7,15 @@ import { getUser } from "./get"
 // updates one or more of the information about a user
 export const updateUser = async ({ userId, userName, email, profilePicId }: Partial<User>) => {
 
-  const numOfItemsToUpdate = [userName, email, profilePicId].filter(value => value !== undefined).length
+  const user = await getUser({ userId })
 
   const sql = SQL`
     
     UPDATE "users" 
     SET 
-      ${userName && '"userName"=' + userName + (numOfItemsToUpdate === 1 ? '' : ',')}
-      ${email && '"email"=' + email + (numOfItemsToUpdate === 2 ? '' : ',')}
-      ${profilePicId && '"profilePicId"=' + profilePicId + (numOfItemsToUpdate === 3 ? '' : ',')}
+      "userName" = ${userName || user.userName},
+      "email" = ${email || user.email},
+      "profilePicId" = ${profilePicId || user.profilePicId}
     WHERE "userId" = ${userId}
 
   `
