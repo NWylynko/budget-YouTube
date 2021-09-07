@@ -151,7 +151,7 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
         />
       </video>
       <TitleBar>
-        <Title>{video.videoName} {height}</Title>
+        <Title>{video.videoName}</Title>
         <select value={height} onChange={(e) => setHeight(e.target.value)}>
           {resolutionOptions.map(({ height, resolutionId }) => (
             <option value={height} key={resolutionId}>{height}p</option>
