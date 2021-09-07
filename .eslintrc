@@ -2,5 +2,8 @@
   "extends": [
     "next",
     "prettier"
-  ]
+  ],
+  "rules": {
+    "react/display-name": "off",
+  }
 }

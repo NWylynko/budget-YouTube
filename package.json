@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
-    "@types/dotenv": "^8.2.0",
     "@types/ffmpeg-static": "^3.0.0",
     "@types/ffprobe": "^1.1.1",
     "@types/ffprobe-static": "^2.0.0",
