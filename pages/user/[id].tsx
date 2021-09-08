@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react"
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Image from "next/image"
+import Image from "../../components/Image"
 import { axios } from "../../ClientApi"
 
 import { GridOfVideos } from "../../components/GridOfVideos";
@@ -62,7 +62,7 @@ export default function UserPage({ videos, requestedUser, subscribers, subscribe
     <Container>
       <UserBar>
         <div>
-          <StyledProfilePic src={`/api/image/get?imageId=${requestedUser.profilePicId}&height=80&width=80&format=webp`} height={80} width={80} />
+          <StyledProfilePic src={requestedUser.profilePicId} height={80} width={80} />
         </div>
         <div>
           <UserName>{requestedUser.userName}</UserName>

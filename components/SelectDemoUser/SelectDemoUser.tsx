@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useApi, axios } from "../../ClientApi";
 import { Button } from "../Styles/Button";
-import Image from "next/image"
+import Image from "../Image"
 
 interface User {
   userId: string;
@@ -31,7 +31,7 @@ export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
             onClick(user.userId);
           }} >
             <div>
-              <StyledImage alt="user profile pic" src={`/api/image/get?imageId=${user.profilePicId}&height=64&width=64&format=webp`} height={64} width={64} />
+              <StyledImage alt="user profile pic" src={user.profilePicId} height={64} width={64} />
             </div>
             <Details>
               <h4>{user.userName}</h4>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
-import Image from "next/image"
+import Image, { imageLoader } from "../../components/Image"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import format from "date-fns/format";
 import { useState, useRef, useEffect } from "react";
@@ -139,7 +139,7 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
           axios.post("/history/update", { videoId: video.videoId, userId, watched })
           console.log("timeupdate", watched);
         }}
-        poster={`/api/image/get?imageId=${video.thumbnailId}&height=720&width=1280&format=webp`}
+        poster={imageLoader({ src: video.thumbnailId, width: 1280 })}
         ref={videoPlayer}
       >
         <source
@@ -205,7 +205,7 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
       <CreatorInfo>
         <ProfilePicContainer>
           <StyledProfilePic
-            src={`/api/image/get?imageId=${videoUser.profilePicId}&height=48&width=48&format=webp`}
+            src={videoUser.profilePicId}
             width={48}
             height={48}
           />

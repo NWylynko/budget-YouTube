@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import Image from "next/image"
+import Image from "../../Image"
 
 interface Comment {
   commentId: string;
@@ -23,7 +23,7 @@ export const Comment = ({
     <Container>
       <ProfilePicContainer>
         <StyledImg
-          src={`/api/image/get?imageId=${profilePicId}&height=40&width=40&format=webp`}
+          src={profilePicId}
           height={40}
           width={40}
         />

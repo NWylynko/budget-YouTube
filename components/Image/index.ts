@@ -1,0 +1,1 @@
+export { Image as default, imageLoader } from "./Image"

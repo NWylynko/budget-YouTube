@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Image from "next/image";
+import Image from "../../../Image";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 interface DetailsProps {
@@ -16,7 +16,7 @@ export const Details = ({profilePicId, videoName, userName, timestamp, views}: D
       {profilePicId && (
         <ImageContainer>
         <StyledImage
-          src={`/api/image/get?imageId=${profilePicId}&height=36&width=36&format=webp`}
+          src={profilePicId}
           height={36}
           width={36}
         />

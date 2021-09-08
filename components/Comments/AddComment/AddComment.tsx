@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Button } from "../../Styles/Button";
 import { useApi, axios } from "../../../ClientApi"
 import { User } from "../../../Types/User"
-import Image from "next/image"
+import Image from "../../../components/Image"
 
 interface AddCommentProps {
   userId: string;
@@ -22,7 +22,7 @@ export const AddComment = ({ userId, onNewComment }: AddCommentProps) => {
   return (
     <Container>
       <ImageContainer>
-        <StyledImage src={`/api/image/get?imageId=${user.profilePicId}&height=40&width=40&format=webp`} height={40} width={40} />
+        <StyledImage src={user.profilePicId} height={40} width={40} />
       </ImageContainer>
       <StyledInput
         value={comment}

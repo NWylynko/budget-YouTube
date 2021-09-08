@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import Image from "next/image";
+import NextImage from "next/image";
+import Image from "../../Image"
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { useApi } from "../../../ClientApi";
@@ -19,7 +20,7 @@ export const Header = () => {
       <div />
       <Link href="/" passHref>
         <LogoWithTextContainer>
-          <Image src="/logo.png" height={50} width={70} alt="budget youtube logo" />
+          <NextImage src="/logo.png" height={50} width={70} alt="budget youtube logo" />
           <Title>Budget YouTube</Title>
         </LogoWithTextContainer>
       </Link>
@@ -37,8 +38,8 @@ export const Header = () => {
         <>
           <Link href={`/user/${userId}`} passHref>
             <StyledProfilePic
-            alt="profile pic"
-              src={`/api/image/get?imageId=${data.profilePicId}&height=48&width=48&format=webp`}
+              alt="profile pic"
+              src={data.profilePicId}
               height={48}
               width={48}
             />

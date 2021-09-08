@@ -27,7 +27,7 @@ interface Query {
 // but this requires the upload function to predict what resolutions will be needed in the future
 export default async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
-  const { imageId, height, width, format } = req.query as Query
+  const { imageId, width, format } = req.query as Query
 
   // sharp only supports these formats
   if (!["heic", "heif", "avif", "jpeg", "jpg", "png", "raw", "tiff", "webp", "gif"].includes(format as string)) {
@@ -36,7 +36,7 @@ export default async function getHandler(req: NextApiRequest, res: NextApiRespon
   }
 
   // we have both the path where the image should be
-  const imagePath = path.join(process.cwd(), `./storage/images/${imageId}/${width}x${height}.${format}`);
+  const imagePath = path.join(process.cwd(), `./storage/images/${imageId}/${width}.${format}`);
   // and the path to the master image
   const masterImagePath = path.join(process.cwd(), `./storage/images/${imageId}/master.webp`);
 
@@ -60,7 +60,7 @@ export default async function getHandler(req: NextApiRequest, res: NextApiRespon
       // create a sharp object, all it needs is the path of the master image
       // then apply the requests params
       const imageSharp = sharp(masterImagePath)
-        .resize(parseInt(width), parseInt(height))
+        .resize(parseInt(width))
         .toFormat(format)
   
       // write the image to file for future requests

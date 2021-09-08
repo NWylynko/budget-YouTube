@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Image from "next/image";
+import Image from "../../../Image";
 
 interface ThumbnailProps { length: number; thumbnailId: string; }
 
@@ -8,7 +8,7 @@ export const Thumbnail = ({ length, thumbnailId }: ThumbnailProps) => {
     <Container>
       <Image
         alt="thumbnail of video"
-        src={`/api/image/get?imageId=${thumbnailId}&height=180&width=320&format=webp`}
+        src={thumbnailId}
         width={320}
         height={180}
       />
