@@ -1,9 +1,9 @@
-// uses code from 
-    // https://betterprogramming.pub/upload-files-to-next-js-with-api-routes-839ce9f28430
-    // https://stackoverflow.com/a/62547135
+// uses code from
+// https://betterprogramming.pub/upload-files-to-next-js-with-api-routes-839ce9f28430
+// https://stackoverflow.com/a/62547135
 import multer from "multer";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Query } from "../Types"
+import type { Query } from "../Types";
 import nextConnect from "next-connect";
 import path from "path";
 import fs from "fs/promises";
@@ -12,26 +12,26 @@ import { Server, Socket } from "socket.io";
 import ffprobe from "ffprobe";
 import ffmpegStatic from "ffmpeg-static";
 import Fessonia from "@tedconf/fessonia";
-import extractFrames from 'ffmpeg-extract-frames';
+import extractFrames from "ffmpeg-extract-frames";
 
 import { addVideo } from "../../../Database/video/add";
 import { updateVideo } from "../../../Database/video/update";
 import { addResolution } from "../../../Database/resolutions/add";
 import { updateResolution } from "../../../Database/resolutions/update";
-import { uploadImage } from "../image/upload"
+import { uploadImage } from "../image/upload";
 
-  // for now we will only use resolutions of 1080p and down, while 4K is fun and all
-  // the time taken to export a video in those higher resolutions can be harsh
-  // in the future to add support for those higher resolutions all that needs to
-  // happens is add in the height of the resolution
+// for now we will only use resolutions of 1080p and down, while 4K is fun and all
+// the time taken to export a video in those higher resolutions can be harsh
+// in the future to add support for those higher resolutions all that needs to
+// happens is add in the height of the resolution
 // const resolutions = [144, 240, 360, 480, 720, 1080]
-const resolutions = [480, 720]
+const resolutions = [480, 720];
 
 const clients: { [x: string]: Socket } = {};
 
 const ffmpeg = Fessonia({
   ffmpeg_bin: ffmpegStatic,
-  ffprobe_bin: ffprobeStatic.path,
+  ffprobe_bin: ffprobeStatic.path
 });
 
 class Pool {
@@ -90,7 +90,7 @@ const apiRoute = nextConnect({
   // Handle any other HTTP method
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-  },
+  }
 });
 
 const IngestDir = path.join(process.cwd(), `./storage/videos/ingest`);
@@ -125,7 +125,7 @@ const handler = async (req, res) => {
     const { videoId } = await addVideo({
       userId,
       videoName,
-      access: "private",
+      access: "private"
     });
 
     console.log(`video`, videoId, fileIn, file, userId);
@@ -171,27 +171,39 @@ export default apiRoute;
 
 export const config = {
   api: {
-    bodyParser: false, // Disallow body parsing, consume as stream
-  },
+    bodyParser: false // Disallow body parsing, consume as stream
+  }
 };
 
-const resizeVideoToFile = async (
-  videoId: string,
-  fileIn: string,
-  videoDir: string,
-  fileType: string,
-  width: string,
-  height: string,
-  resolutionId: string,
-  frames: number,
-  index: number,
-  totalNumOfVideos: number
-): Promise<void> => {
+interface ResizeVideoToFile {
+  videoId: string;
+  fileIn: string;
+  videoDir: string;
+  fileType: string;
+  width: string;
+  height: string;
+  resolutionId: string;
+  frames: number;
+  index: number;
+  totalNumOfVideos: number;
+}
+
+async function resizeVideoToFile({
+  videoId,
+  fileIn,
+  videoDir,
+  fileType,
+  width,
+  height,
+  resolutionId,
+  frames,
+  index,
+  totalNumOfVideos
+}: ResizeVideoToFile): Promise<void> {
   return new Promise(async (resolve, reject) => {
     // from ingest we want to create a copy of the video in .webm and .mp4 in the
     // range of the resolutions we generated above
     // then the video can be deleted from ingest
-
     await updateResolution({ resolutionId, status: "PROCESSING" });
 
     // this object has five classes, Fessonia is an object oriented package so everything is a class
@@ -199,13 +211,7 @@ const resizeVideoToFile = async (
     // FFmpeg is for defining where the output file goes and in what format, FilterNode is an object
     // that applies a filter, in this case we will just use it to resize the video
     // Filter chain is an array of filterNodes, it will apply the filters in the order defined
-    const {
-      FFmpegCommand,
-      FFmpegInput,
-      FFmpegOutput,
-      FilterNode,
-      FilterChain,
-    } = ffmpeg;
+    const { FFmpegCommand, FFmpegInput, FFmpegOutput, FilterNode, FilterChain } = ffmpeg;
 
     // create the new FFmpeg Object
     const video = new FFmpegCommand();
@@ -226,8 +232,8 @@ const resizeVideoToFile = async (
     video.addOutput(new FFmpegOutput(fileOut));
 
     video.on("update", (data) => {
-      console.log(videoId, `frame:`, data.frame);
-      const percentage = Math.floor((data.frame / frames) * 100)
+      console.log(videoId, "update", { height, width }, `frame:`, data.frame);
+      const percentage = Math.floor((data.frame / frames) * 100);
       clients[videoId]?.emit(videoId, {
         event: "update",
         videoId,
@@ -244,12 +250,13 @@ const resizeVideoToFile = async (
     });
 
     video.on("success", async (data) => {
+      console.log(videoId, "success", { height, width }, `frame:`, data.frame);
       clients[videoId]?.emit(videoId, {
         event: "success",
         videoId,
         height,
         width,
-        data,
+        data
       });
       await updateResolution({ resolutionId, status: "DONE" });
       resolve();
@@ -258,12 +265,13 @@ const resizeVideoToFile = async (
 
     video.on("error", async (err) => {
       // inspect and handle the error here
+      console.log(videoId, "error", { height, width }, err);
       clients[videoId]?.emit(videoId, {
         event: "error",
         videoId,
         height,
         width,
-        error: err,
+        error: err
       });
       await updateResolution({ resolutionId, status: "ERROR" });
       await fs.rm(fileOut);
@@ -282,7 +290,7 @@ const resizeVideoToFile = async (
     //   selectedVideoResolutions,
     // });
   });
-};
+}
 
 const calcAspectRatio = (ratio: string) => {
   const [first, second] = ratio.split(":");
@@ -296,35 +304,38 @@ const calcAspectRatio = (ratio: string) => {
 // this thumbnail is used both for the cover of the video and to display
 // while the video loads
 const setFirstFrameToThumbnail = async (videoPath: string, videoId: string) => {
-
-  // create a tmp directory in /tmp 
-  const tmpPath = await fs.mkdtemp('/tmp/')
-  const tmpImage = tmpPath + '/thumbnail.png'
+  // create a tmp directory in /tmp
+  const tmpPath = await fs.mkdtemp("/tmp/");
+  const tmpImage = tmpPath + "/thumbnail.png";
 
   // this function saves the first frame in the video to the tmp image dir
   await extractFrames({
     input: videoPath,
     output: tmpImage,
-    offsets: [
-      1
-    ],
+    offsets: [1],
     numFrames: 1,
     ffmpegPath: ffmpegStatic
-  })
+  });
 
   // read the image from the file system
   const thumbnail = await fs.readFile(tmpImage);
 
   // upload the image to storage and update the video details
-  const { imageId } = await uploadImage(thumbnail, { type: "thumbnail", videoId, userId: null })
+  const { imageId } = await uploadImage(thumbnail, { type: "thumbnail", videoId, userId: null });
 
   // remove the tmp dir
-  await fs.rm(tmpPath, { recursive: true, force: true })
+  await fs.rm(tmpPath, { recursive: true, force: true });
 
-  return { imageId }
-}
+  return { imageId };
+};
 
-export async function processNewVideo({ videoId, fileIn: fileDir }: { videoId: string; fileIn: string; }): Promise<void> {
+export async function processNewVideo({
+  videoId,
+  fileIn: fileDir
+}: {
+  videoId: string;
+  fileIn: string;
+}): Promise<void> {
   const videoDir = path.join(process.cwd(), `./storage/videos/${videoId}/`);
   await fs.mkdir(videoDir, { recursive: true });
 
@@ -345,35 +356,33 @@ export async function processNewVideo({ videoId, fileIn: fileDir }: { videoId: s
   // the format will generally be "16:9", this is great but we need this in a number
   // the computer can understand, so we divided 16 / 9 to get 1.7777, this can be times
   // by the height of the video we want to maintain aspect ratio
-  const aspectRatio = calcAspectRatio(videoDetails.display_aspect_ratio || `${videoDetails.width}:${videoDetails.height}`);
+  const aspectRatio = calcAspectRatio(
+    videoDetails.display_aspect_ratio || `${videoDetails.width}:${videoDetails.height}`
+  );
 
   const isVerticalVideo = videoDetails.tags.rotate === "90";
 
-  const allVideoResolutions = resolutions.map(
-    (standardRes) => {
-      let width: number;
-      let height: number;
+  const allVideoResolutions = resolutions.map((standardRes) => {
+    let width: number;
+    let height: number;
 
-      if (isVerticalVideo) {
-        width = standardRes;
-        height = Math.floor(aspectRatio * standardRes);
-      } else {
-        width = Math.floor(aspectRatio * standardRes);
-        height = standardRes;
-      }
-
-      const pixels = width * standardRes;
-      return { width, height, pixels };
+    if (isVerticalVideo) {
+      width = standardRes;
+      height = Math.floor(aspectRatio * standardRes);
+    } else {
+      width = Math.floor(aspectRatio * standardRes);
+      height = standardRes;
     }
-  );
+
+    const pixels = width * standardRes;
+    return { width, height, pixels };
+  });
 
   // this simply is the number of pixels in the original video file uploaded
   const masterVideoPixelCount = videoDetails.height * videoDetails.width;
 
   // by comparing how large the number of pixels we can remove the larger sizes
-  const selectedVideoResolutions = allVideoResolutions.filter(
-    ({ pixels }) => pixels <= masterVideoPixelCount
-  );
+  const selectedVideoResolutions = allVideoResolutions.filter(({ pixels }) => pixels <= masterVideoPixelCount);
 
   const videoFormats = [".webm", ".mp4"];
 
@@ -398,30 +407,30 @@ export async function processNewVideo({ videoId, fileIn: fileDir }: { videoId: s
         videoId,
         height: height.toString(),
         width: width.toString(),
-        fileType,
+        fileType
       });
 
       const index = numOfVideos;
 
       // add the function to the pool to be processed
-      videoPool.addTask(() => resizeVideoToFile(
-        videoId,
-        fileDir,
-        videoDir,
-        fileType,
-        width.toString(),
-        height.toString(),
-        resolutionId,
-        frames,
-        index,
-        totalNumOfVideos
-      )
+      videoPool.addTask(() =>
+        resizeVideoToFile({
+          videoId,
+          fileIn: fileDir,
+          videoDir,
+          fileType,
+          width: width.toString(),
+          height: height.toString(),
+          resolutionId,
+          frames,
+          index,
+          totalNumOfVideos
+        })
       );
 
       videoPool.start();
 
       numOfVideos++;
-
     });
   });
 }
