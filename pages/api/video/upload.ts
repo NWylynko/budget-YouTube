@@ -20,6 +20,13 @@ import { addResolution } from "../../../Database/resolutions/add";
 import { updateResolution } from "../../../Database/resolutions/update";
 import { uploadImage } from "../image/upload"
 
+  // for now we will only use resolutions of 1080p and down, while 4K is fun and all
+  // the time taken to export a video in those higher resolutions can be harsh
+  // in the future to add support for those higher resolutions all that needs to
+  // happens is add in the height of the resolution
+// const resolutions = [144, 240, 360, 480, 720, 1080]
+const resolutions = [480, 720]
+
 const clients: { [x: string]: Socket } = {};
 
 const ffmpeg = Fessonia({
@@ -121,114 +128,9 @@ const handler = async (req, res) => {
       access: "private",
     });
 
-    const videoDir = path.join(process.cwd(), `./storage/videos/${videoId}/`);
-    await fs.mkdir(videoDir, { recursive: true });
+    console.log(`video`, videoId, fileIn, file, userId);
 
-    console.log(`video`, videoId, videoDir, file, userId);
-
-    // ffprobe is a tool that looks into videos to get a bunch of information
-    // the tool returns an object called streams, it is a list
-    // a video file contains both a video and an audio stream
-    // for now I will just assume that the first item is the video and the second is audio
-    // as i test the system with more data i may find this this changes from video to video
-    // in which case i will need to look at the properties of the stream to figure out what it is
-    const { streams } = await ffprobe(fileIn, { path: ffprobeStatic.path });
-    const [videoDetails, audioDetails] = streams;
-    console.log(streams);
-
-    const framesString = videoDetails.nb_frames as unknown as string
-    const frames = parseInt(framesString)
-
-    // we need the aspect ratio of the video to generate different formats of the video
-    // the format will generally be "16:9", this is great but we need this in a number
-    // the computer can understand, so we divided 16 / 9 to get 1.7777, this can be times
-    // by the height of the video we want to maintain aspect ratio
-    const aspectRatio = calcAspectRatio(videoDetails.display_aspect_ratio || `${videoDetails.width}:${videoDetails.height}`);
-
-    const isVerticalVideo = videoDetails.tags.rotate === "90"
-
-    // for now we will only use resolutions of 1080p and down, while 4K is fun and all
-    // the time taken to export a video in those higher resolutions can be harsh
-    // in the future to add support for those higher resolutions all that needs to
-    // happens is add in the height of the resolution
-    const allVideoResolutions = [144, 240, 360, 480, 720, 1080].map(
-      (standardRes) => {
-        let width: number;
-        let height: number;
-
-        if (isVerticalVideo) {
-          width = standardRes
-          height = Math.floor(aspectRatio * standardRes);
-        } else {
-          width = Math.floor(aspectRatio * standardRes);
-          height = standardRes
-        }
-
-        const pixels = width * standardRes;
-        return { width, height, pixels };
-      }
-    );
-
-    // this simply is the number of pixels in the original video file uploaded
-    const masterVideoPixelCount = videoDetails.height * videoDetails.width;
-
-    // by comparing how large the number of pixels we can remove the larger sizes
-    const selectedVideoResolutions = allVideoResolutions.filter(
-      ({ pixels }) => pixels <= masterVideoPixelCount
-    );
-
-    const videoFormats = [".webm", ".mp4"]
-
-    console.log({ selectedVideoResolutions });
-
-    // at this point we have collected and generated all the data needed to process the video
-
-    await setFirstFrameToThumbnail(fileIn, videoId)
-
-    if (videoDetails.duration) {
-      const duration = videoDetails.duration as unknown as string
-      const length = Math.floor(parseFloat(duration) * 1000)
-      await updateVideo({videoId, newVideo: { length }})
-    }
-
-    let numOfVideos = 0;
-    const totalNumOfVideos = selectedVideoResolutions.length * videoFormats.length 
-
-    selectedVideoResolutions.map(({ width, height }, index1) => {
-      videoFormats.map(async (fileType, index2) => {
-        // create a table to store each different resolution and file type for a video
-        const { resolutionId } = await addResolution({
-          videoId,
-          height: height.toString(),
-          width: width.toString(),
-          fileType,
-        });
-
-        const index = numOfVideos;
-
-        // add the function to the pool to be processed
-        videoPool.addTask(() =>
-          resizeVideoToFile(
-            videoId,
-            fileIn,
-            videoDir,
-            fileType,
-            width.toString(),
-            height.toString(),
-            resolutionId,
-            frames,
-            index,
-            totalNumOfVideos
-          )
-        );
-
-        videoPool.start();
-
-        numOfVideos++;
-
-      });
-    });
-
+    await processNewVideo({ videoId, fileIn });
 
     res.status(200).json({ videoId });
   }
@@ -420,4 +322,106 @@ const setFirstFrameToThumbnail = async (videoPath: string, videoId: string) => {
   await fs.rm(tmpPath, { recursive: true, force: true })
 
   return { imageId }
+}
+
+export async function processNewVideo({ videoId, fileIn: fileDir }: { videoId: string; fileIn: string; }): Promise<void> {
+  const videoDir = path.join(process.cwd(), `./storage/videos/${videoId}/`);
+  await fs.mkdir(videoDir, { recursive: true });
+
+  // ffprobe is a tool that looks into videos to get a bunch of information
+  // the tool returns an object called streams, it is a list
+  // a video file contains both a video and an audio stream
+  // for now I will just assume that the first item is the video and the second is audio
+  // as i test the system with more data i may find this this changes from video to video
+  // in which case i will need to look at the properties of the stream to figure out what it is
+  const { streams } = await ffprobe(fileDir, { path: ffprobeStatic.path });
+  const [videoDetails, audioDetails] = streams;
+  console.log(streams);
+
+  const framesString = videoDetails.nb_frames as unknown as string;
+  const frames = parseInt(framesString);
+
+  // we need the aspect ratio of the video to generate different formats of the video
+  // the format will generally be "16:9", this is great but we need this in a number
+  // the computer can understand, so we divided 16 / 9 to get 1.7777, this can be times
+  // by the height of the video we want to maintain aspect ratio
+  const aspectRatio = calcAspectRatio(videoDetails.display_aspect_ratio || `${videoDetails.width}:${videoDetails.height}`);
+
+  const isVerticalVideo = videoDetails.tags.rotate === "90";
+
+  const allVideoResolutions = resolutions.map(
+    (standardRes) => {
+      let width: number;
+      let height: number;
+
+      if (isVerticalVideo) {
+        width = standardRes;
+        height = Math.floor(aspectRatio * standardRes);
+      } else {
+        width = Math.floor(aspectRatio * standardRes);
+        height = standardRes;
+      }
+
+      const pixels = width * standardRes;
+      return { width, height, pixels };
+    }
+  );
+
+  // this simply is the number of pixels in the original video file uploaded
+  const masterVideoPixelCount = videoDetails.height * videoDetails.width;
+
+  // by comparing how large the number of pixels we can remove the larger sizes
+  const selectedVideoResolutions = allVideoResolutions.filter(
+    ({ pixels }) => pixels <= masterVideoPixelCount
+  );
+
+  const videoFormats = [".webm", ".mp4"];
+
+  console.log({ selectedVideoResolutions });
+
+  // at this point we have collected and generated all the data needed to process the video
+  await setFirstFrameToThumbnail(fileDir, videoId);
+
+  if (videoDetails.duration) {
+    const duration = videoDetails.duration as unknown as string;
+    const length = Math.floor(parseFloat(duration) * 1000);
+    await updateVideo({ videoId, newVideo: { length } });
+  }
+
+  let numOfVideos = 0;
+  const totalNumOfVideos = selectedVideoResolutions.length * videoFormats.length;
+
+  selectedVideoResolutions.map(({ width, height }, index1) => {
+    videoFormats.map(async (fileType, index2) => {
+      // create a table to store each different resolution and file type for a video
+      const { resolutionId } = await addResolution({
+        videoId,
+        height: height.toString(),
+        width: width.toString(),
+        fileType,
+      });
+
+      const index = numOfVideos;
+
+      // add the function to the pool to be processed
+      videoPool.addTask(() => resizeVideoToFile(
+        videoId,
+        fileDir,
+        videoDir,
+        fileType,
+        width.toString(),
+        height.toString(),
+        resolutionId,
+        frames,
+        index,
+        totalNumOfVideos
+      )
+      );
+
+      videoPool.start();
+
+      numOfVideos++;
+
+    });
+  });
 }

@@ -11,6 +11,7 @@ import { addComment } from "../comment/add"
 import { addSubscriber } from "../subscriber/add"
 
 import { uploadImage } from "../../pages/api/image/upload"
+import { processNewVideo } from "../../pages/api/video/upload"
 
 export const addTestData = async () => {
 
@@ -42,13 +43,13 @@ export const addTestData = async () => {
   await updateVideo({ videoId: video4.videoId, newVideo: { description: 'sailing down the river', length: 23452345 } })
   await updateVideo({ videoId: video5.videoId, newVideo: { description: 'fixing up my boat for the race', length: 34253455 } })
 
-  const thumbnailImg = await openImage('./test-data/placeholder-thumbnail.png')
+  await processNewVideo({ videoId: video1.videoId, fileIn: "./test-data/muddy-vibing.MOV" })
+  await processNewVideo({ videoId: video2.videoId, fileIn: "./test-data/the-class-be-kinda-dumb.mp4" })
+  await processNewVideo({ videoId: video3.videoId, fileIn: "./test-data/muddy-vibing.MOV" })
+  await processNewVideo({ videoId: video4.videoId, fileIn: "./test-data/funny-cat-video.mp4" })
+  await processNewVideo({ videoId: video5.videoId, fileIn: "./test-data/the-monitor-is-blurry.mp4" })
 
-  await uploadImage(thumbnailImg, { type: "thumbnail", videoId: video1.videoId, userId: null })
-  await uploadImage(thumbnailImg, { type: "thumbnail", videoId: video2.videoId, userId: null })
-  await uploadImage(thumbnailImg, { type: "thumbnail", videoId: video3.videoId, userId: null })
-  await uploadImage(thumbnailImg, { type: "thumbnail", videoId: video4.videoId, userId: null })
-  await uploadImage(thumbnailImg, { type: "thumbnail", videoId: video5.videoId, userId: null })
+  await uploadImage(await openImage("./test-data/sailing.jpg"), { type: "thumbnail", userId: null, videoId: video4.videoId })
 
   await addHistory({ videoId: video1.videoId, userId: user1.userId })
   await addVote({ videoId: video1.videoId, userId: user1.userId, type: "like" })

@@ -51,6 +51,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <Head>
+        <title>Budget Youtube</title>
+      </Head>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Layout>
