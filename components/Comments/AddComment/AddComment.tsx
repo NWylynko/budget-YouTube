@@ -13,14 +13,15 @@ export const AddComment = ({ userId, onNewComment }: AddCommentProps) => {
   const [comment, setComment] = useState("");
   const { data: user } = useApi<User>(`/user/get/${userId}`);
 
-  console.log(`user`, user)
-
-  const addComment = () => onNewComment(comment);
+  const addComment = () => {
+    onNewComment(comment);
+    setComment("");
+  }
 
   return (
     <Container>
       <ImageContainer>
-        {/* <StyledImage src={`/api/image/get?imageId=${data.profilePicId}&height=40&width=40&format=webp`} height={40} width={40} /> */}
+        <StyledImage src={`/api/image/get?imageId=${user.profilePicId}&height=40&width=40&format=webp`} height={40} width={40} />
       </ImageContainer>
       <StyledInput
         value={comment}
