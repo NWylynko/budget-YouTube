@@ -20,7 +20,7 @@ export const updateUser = async ({ userId, userName, email, profilePicId }: Part
 
   `
 
-  console.log(sql)
+  console.log({sql})
 
   db.run(sql);
 

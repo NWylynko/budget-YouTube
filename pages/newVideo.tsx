@@ -35,7 +35,7 @@ export default function NewVideoPage() {
 
     const videoFile = acceptedFiles[0];
 
-    console.log(videoFile);
+    console.log({videoFile});
 
     const videoFileNameArray = videoFile.name.split(".");
 

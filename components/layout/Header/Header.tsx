@@ -13,7 +13,7 @@ export const Header = () => {
   const userId = Cookies.get("userId");
   const { data } = useApi<User>(`/user/get/${userId}`);
 
-  console.log(data);
+  console.log({data});
 
   return (
     <StyledHeader>

@@ -102,7 +102,7 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
     }
   }, [watched])
 
-  console.log(props)
+  console.log({props})
 
   const { data: vote } = useApi("/vote/get", { videoId, userId }, props.vote)
   const { data: votes } = useApi("/vote/getCount", { videoId }, props.votes)

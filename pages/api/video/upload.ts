@@ -347,7 +347,7 @@ export async function processNewVideo({
   // in which case i will need to look at the properties of the stream to figure out what it is
   const { streams } = await ffprobe(fileDir, { path: ffprobeStatic.path });
   const [videoDetails, audioDetails] = streams;
-  console.log(streams);
+  console.log({streams});
 
   const framesString = videoDetails.nb_frames as unknown as string;
   const frames = parseInt(framesString);
