@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react"
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-
+import Image from "next/image"
 import { axios } from "../../ClientApi"
 
 import { GridOfVideos } from "../../components/GridOfVideos";
@@ -89,7 +89,7 @@ const UserBar = styled.div`
   margin: 36px;
 `;
 
-const StyledProfilePic = styled.img`
+const StyledProfilePic = styled(Image)`
   border-radius: 50%;
 `;
 

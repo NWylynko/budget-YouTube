@@ -1,5 +1,5 @@
 import styled from "styled-components";
-// import Image from "next/image";
+import Image from "next/image";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 interface DetailsProps {
@@ -44,7 +44,7 @@ const ImageContainer = styled.div`
   min-width: 36px;
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled(Image)`
   border-radius: 50%;
 `;
 

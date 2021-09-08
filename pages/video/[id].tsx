@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import Image from "next/image"
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import format from "date-fns/format";
 import { useState, useRef, useEffect } from "react";
@@ -274,7 +275,7 @@ const ProfilePicContainer = styled.div`
   margin: 5px;
 `;
 
-const StyledProfilePic = styled.img`
+const StyledProfilePic = styled(Image)`
   border-radius: 50%;
 `;
 

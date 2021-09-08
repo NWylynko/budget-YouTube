@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Button } from "../../Styles/Button";
 import { useApi, axios } from "../../../ClientApi"
 import { User } from "../../../Types/User"
+import Image from "next/image"
 
 interface AddCommentProps {
   userId: string;
@@ -43,7 +44,7 @@ const ImageContainer = styled.div`
   margin: 5px;
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled(Image)`
   border-radius: 50%;
 `;
 

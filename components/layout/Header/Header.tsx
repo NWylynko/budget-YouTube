@@ -75,6 +75,6 @@ const Title = styled.h1`
   font-family: "Rock Salt", cursive;
 `;
 
-const StyledProfilePic = styled.img`
+const StyledProfilePic = styled(Image)`
   border-radius: 50%;
 `;

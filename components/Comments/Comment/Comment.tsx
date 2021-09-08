@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import Image from "next/image"
 
 interface Comment {
   commentId: string;
@@ -51,7 +52,7 @@ const ProfilePicContainer = styled.div`
   margin: 12px;
 `;
 
-const StyledImg = styled.img`
+const StyledImg = styled(Image)`
   border-radius: 50%;
 `;
 
