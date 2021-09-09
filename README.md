@@ -25,3 +25,7 @@ a very budget somewhat scuffed youtube rip off using nextjs and a sqlite databas
 3. go to http://localhost:3000/
 4. click reset database to set up database
 5. wait for page to reload and select a user
+
+## warning
+
+- for currently unknown reasons multier throws an error when uploading a video to an instance of this server running in docker
