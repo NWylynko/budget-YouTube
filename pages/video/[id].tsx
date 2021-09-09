@@ -146,10 +146,13 @@ export default function VideoPage(props: InferGetServerSidePropsType<typeof getS
           src={`/api/video/get?videoId=${video.videoId}&height=${height}&fileType=webm`}
           type="video/webm"
         />
-        <source
+        {/* this needs to be added to support browsers that don't support webm
+         the video format will also need to be enabled in the upload file so the 
+         format is available to be downloaded */}
+        {/* <source
           src={`/api/video/get?videoId=${video.videoId}&height=${height}&fileType=mp4`}
           type="video/mp4"
-        />
+        /> */}
       </video>
       <TitleBar>
         <Title>{video.videoName}</Title>

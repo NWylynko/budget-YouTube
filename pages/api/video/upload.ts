@@ -27,6 +27,10 @@ import { uploadImage } from "../image/upload";
 // const resolutions = [144, 240, 360, 480, 720, 1080]
 const resolutions = [480, 720];
 
+// move formats could be added if ffmpeg supports it
+// const videoFormats = [".webm", ".mp4"];
+const videoFormats = [".webm"];
+
 const clients: { [x: string]: Socket } = {};
 
 const ffmpeg = Fessonia({
@@ -111,6 +115,8 @@ interface File {
 
 const handler = async (req, res) => {
   const { userId, videoName } = req.query as Query;
+
+  console.log({ IngestDir })
 
   if (userId && videoName) {
     const file: File = req.file;
@@ -383,8 +389,6 @@ export async function processNewVideo({
 
   // by comparing how large the number of pixels we can remove the larger sizes
   const selectedVideoResolutions = allVideoResolutions.filter(({ pixels }) => pixels <= masterVideoPixelCount);
-
-  const videoFormats = [".webm", ".mp4"];
 
   console.log({ selectedVideoResolutions });
 
