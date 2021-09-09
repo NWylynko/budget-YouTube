@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "run": "npx yarn install && npx yarn build && npx yarn start"
   },
   "dependencies": {
     "@tedconf/fessonia": "^2.2.1",
