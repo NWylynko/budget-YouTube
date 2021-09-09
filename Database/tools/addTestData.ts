@@ -25,11 +25,15 @@ export const addTestData = async () => {
   const user4 = await addUser({ userName: 'cameron', email: 'cameron@google.com', profilePicId })
   const user5 = await addUser({ userName: 'henry', email: 'henry@henry.com', profilePicId })
 
-  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user1.userName}.svg`), { type: "user", userId: user1.userId, videoId: null })
-  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user2.userName}.svg`), { type: "user", userId: user2.userId, videoId: null })
-  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user3.userName}.svg`), { type: "user", userId: user3.userId, videoId: null })
-  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user4.userName}.svg`), { type: "user", userId: user4.userId, videoId: null })
-  await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user5.userName}.svg`), { type: "user", userId: user5.userId, videoId: null })
+  try {
+    await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user1.userName}.svg`), { type: "user", userId: user1.userId, videoId: null })
+    await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user2.userName}.svg`), { type: "user", userId: user2.userId, videoId: null })
+    await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user3.userName}.svg`), { type: "user", userId: user3.userId, videoId: null })
+    await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user4.userName}.svg`), { type: "user", userId: user4.userId, videoId: null })
+    await uploadImage(await openWebImage(`https://avatars.dicebear.com/api/croodles/${user5.userName}.svg`), { type: "user", userId: user5.userId, videoId: null })  
+  } catch (error) {
+    console.error("unable to retrieve avatars")
+  }
 
   const video1 = await addVideo({ userId: user1.userId, videoName: 'my first video', access: "public" })
   const video2 = await addVideo({ userId: user1.userId, videoName: 'vlog day two', access: "public" })
