@@ -99,7 +99,7 @@ const apiRoute = nextConnect({
 
 const IngestDir = path.join(process.cwd(), `./storage/videos/ingest`);
 
-console.log({ IngestDir })
+(async () => { fs.writeFile(path.join(process.cwd(), `ingestDir.txt`), IngestDir) })()
 
 const ramUploadSpace = multer({ dest: IngestDir });
 const uploadMiddleWare = ramUploadSpace.single("file");
