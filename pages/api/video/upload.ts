@@ -99,6 +99,8 @@ const apiRoute = nextConnect({
 
 const IngestDir = path.join(process.cwd(), `./storage/videos/ingest`);
 
+console.log({ IngestDir })
+
 const ramUploadSpace = multer({ dest: IngestDir });
 const uploadMiddleWare = ramUploadSpace.single("file");
 
@@ -115,8 +117,6 @@ interface File {
 
 const handler = async (req, res) => {
   const { userId, videoName } = req.query as Query;
-
-  console.log({ IngestDir })
 
   if (userId && videoName) {
     const file: File = req.file;
