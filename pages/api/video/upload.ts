@@ -116,8 +116,6 @@ interface File {
 const handler = async (req, res) => {
   const { userId, videoName } = req.query as Query;
 
-  console.log({ IngestDir })
-
   if (userId && videoName) {
     const file: File = req.file;
     const fileIn = file.path;
