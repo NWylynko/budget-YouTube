@@ -14,13 +14,14 @@ a very budget somewhat scuffed youtube rip off using nextjs and a sqlite databas
 4. `yarn start`
 5. go to http://localhost:3000/
 6. click reset database to set up database
-7. reload the page and select a user
+7. wait for page to reload and select a user
 
 ### docker
 
 - requires docker
 
-1. `docker run -p 3000:3000 nwylynko/budget-youtube`
-2. go to http://localhost:3000/
-3. click reset database to set up database
-4. reload the page and select a user
+1. `docker pull nwylynko/budget-youtube:main`
+2. `docker run -p 3000:3000 nwylynko/budget-youtube:main`
+3. go to http://localhost:3000/
+4. click reset database to set up database
+5. wait for page to reload and select a user
