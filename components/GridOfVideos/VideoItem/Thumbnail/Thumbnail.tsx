@@ -1,9 +1,14 @@
 import styled from "styled-components";
 import Image from "../../../Image";
 
-interface ThumbnailProps { length: number; thumbnailId: string; }
+interface ThumbnailProps { length: number; thumbnailId: string; watched?: number; }
 
-export const Thumbnail = ({ length, thumbnailId }: ThumbnailProps) => {
+export const Thumbnail = ({ length, thumbnailId, watched }: ThumbnailProps) => {
+
+  const percentageWatched = watched ? Math.floor(((watched * 1000) / length) * 100) : 0
+
+  console.log({ percentageWatched })
+
   return (
     <Container>
       <Image
@@ -12,6 +17,7 @@ export const Thumbnail = ({ length, thumbnailId }: ThumbnailProps) => {
         width={320}
         height={180}
       />
+      {percentageWatched !== 0 && <ProgressBar percentageWatched={percentageWatched} />}
       <TimeStampContainer>
         <TimeStamp>
           {Length(length)}
@@ -34,8 +40,20 @@ const Length = (timestamp: number) => {
   return minutesAndSeconds
 }
 
+interface ProgressBarProps {
+  percentageWatched: number;
+}
+
+const ProgressBar = styled.div`
+  width: ${({ percentageWatched }: ProgressBarProps) => `${Math.min(percentageWatched, 100)}%`};
+  height: 5px;
+  background-color: ${({ theme }) => theme.colors.brand};
+  position: absolute;
+  bottom: 0px;
+`;
+
 const Container = styled.div`
-position: relative;
+  position: relative;
   max-width: 320px;
   max-height: 180px;
 `;
@@ -50,8 +68,8 @@ const TimeStampContainer = styled.div`
 
 const TimeStamp = styled.span`
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 5px;
+  right: 5px;
   margin: 5px;
   padding: 5px;
   background-color: #000000b3;

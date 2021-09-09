@@ -13,14 +13,15 @@ interface VideoitemProps {
   thumbnailId: string;
   profilePicId: string;
   views: number;
+  watched?: number;
 }
 
-export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, profilePicId, userName, views, direction = "column" }: VideoitemProps & { direction?: "row" | "column" }) => {
+export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, profilePicId, userName, views, watched, direction = "column" }: VideoitemProps & { direction?: "row" | "column" }) => {
 
   return (
     <Link href={`/video/${videoId}`} passHref>
       <Container direction={direction}>
-        <Thumbnail {...{ length, thumbnailId }} />
+        <Thumbnail {...{ length, thumbnailId, watched }} />
         <Details {...{ videoName, timestamp, profilePicId, userName, views }} />
       </Container>
     </Link>
