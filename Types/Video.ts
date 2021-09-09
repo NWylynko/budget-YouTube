@@ -4,7 +4,7 @@ export interface Video {
   videoId: string;
   videoName: string;
   description: string;
-  thumbnailUrl: string;
+  thumbnailId: string;
   userId: string;
   timestamp: Date;
   // views: number;

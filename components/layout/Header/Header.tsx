@@ -4,7 +4,7 @@ import Image from "../../Image"
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { useApi } from "../../../ClientApi";
-import { BiVideoPlus, BiSearch } from "react-icons/bi";
+import { BiHistory, BiVideoPlus, BiSearch } from "react-icons/bi";
 import { User } from "../../../Types/User"
 
 export interface HeaderProps {}
@@ -17,6 +17,11 @@ export const Header = () => {
 
   return (
     <StyledHeader>
+      <Link href="/history" passHref>
+        <div>
+          <BiHistory size={36} color="#606060" />
+        </div>
+      </Link>
       <div />
       <Link href="/" passHref>
         <LogoWithTextContainer>
@@ -35,16 +40,17 @@ export const Header = () => {
         </div>
       </Link>
       {userId && data ? (
-        <>
-          <Link href={`/user/${userId}`} passHref>
+        <Link href={`/user/${userId}`} passHref>
+        <div>
+          
             <StyledProfilePic
               alt="profile pic"
               src={data.profilePicId}
               height={48}
               width={48}
             />
-          </Link>
-        </>
+        </div>
+        </Link>
       ) : (
         <></>
       )}
@@ -54,7 +60,7 @@ export const Header = () => {
 
 const StyledHeader = styled.header`
   display: grid;
-  grid-template-columns: calc(48px * 3) auto 48px 48px 48px;
+  grid-template-columns: 48px calc(48px * 2) auto 48px 48px 48px;
   /* flex-direction: row; */
   max-height: 75px;
   /* justify-content: center; */

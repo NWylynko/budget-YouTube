@@ -16,7 +16,7 @@ export const GridOfVideos = ({ videos }: { videos: Video[] }) => {
   return (
     <GridContainer>
       {videos.map((video) => (
-        <VideoItem key={video.videoId} {...video} />
+        <VideoItem key={video.videoId} {...video} direction="column" />
       ))}
     </GridContainer>
   )

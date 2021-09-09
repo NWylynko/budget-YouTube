@@ -7,7 +7,7 @@ interface Comment {
   timestamp: number;
   message: string;
   userName: string;
-  profilePicUrl: string;
+  profilePicId: string;
 }
 
 // get all the comments for a single video

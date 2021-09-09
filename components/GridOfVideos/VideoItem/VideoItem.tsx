@@ -15,11 +15,11 @@ interface VideoitemProps {
   views: number;
 }
 
-export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, profilePicId, userName, views }: VideoitemProps) => {
+export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, profilePicId, userName, views, direction = "column" }: VideoitemProps & { direction?: "row" | "column" }) => {
 
   return (
     <Link href={`/video/${videoId}`} passHref>
-      <Container>
+      <Container direction={direction}>
         <Thumbnail {...{ length, thumbnailId }} />
         <Details {...{ videoName, timestamp, profilePicId, userName, views }} />
       </Container>
@@ -27,8 +27,14 @@ export const VideoItem = ({ videoId, videoName, timestamp, length, thumbnailId, 
   );
 };
 
+interface ContainerProps {
+  direction: "row" | "column"
+}
+
 const Container = styled.div`
-  max-width: 320px;
+  max-width: ${({ direction }) => direction === "column" ? "320px" : "auto"};;
+  display: flex;
+  flex-direction: ${({ direction }: ContainerProps) => direction};
 
   &:hover {
     cursor: pointer;

@@ -4,20 +4,21 @@ import SQL from 'sql-template-strings';
 // gets a users history
 export const getAllHistory = async ({userId}: { userId: string }) => db.all(SQL`
 
-  SELECT 
-    videos.videoId, 
-    users.userId, 
-    users.userName,
-    users.profilePicUrl,
+  SELECT
     history.timestamp,
     history.watched,
+    videos.videoId,
     videos.description,
     videos.length,
-    videos.thumbnailUrl,
-    videos.videoName
+    videos.thumbnailId,
+    videos.videoName,
+    users.userId, 
+    users.userName,
+    users.profilePicId
   FROM history, videos, users
   WHERE history.userId = ${userId}
-  AND videos.userId = history.userId
-  AND users.userId = history.userId
+  AND history.videoId = videos.videoId
+  AND videos.userId = users.userId
+  ORDER BY history.timestamp DESC
 
 `);
