@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useApi, axios } from "../../ClientApi";
 import { Button } from "../Styles/Button";
 import Image from "../Image"
+import { useState } from "react"
 
 interface User {
   userId: string;
@@ -17,7 +18,10 @@ interface SelectDemoUserProps {
 export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
   const { data: users } = useApi<User[]>("/user/getAll");
 
+  const [resetting, setResetting] = useState(false)
+
   const onResetDatabase = async () => {
+    setResetting(true)
     console.log({ reset: await axios.post('/database/reset')});
     location.reload();
   }
@@ -42,7 +46,8 @@ export const SelectDemoUser = ({ onClick }: SelectDemoUserProps) => {
       ) : (
         <span>Loading users...</span>
       )}
-      <Button onClick={onResetDatabase}>Reset Database</Button>
+      <Button onClick={onResetDatabase} disabled={resetting}>Reset Database</Button>
+      {resetting && <span>resetting system</span>}
     </Container>
   );
 };
